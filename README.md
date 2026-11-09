@@ -1,100 +1,137 @@
-# Zenviq Island — Dynamic Island for Claude Code
+# Zenviq Island
 
-TwoCode jaisa island, tumhare liye — screen ke top par ek chhota pill jo batata hai Claude Code kya kar raha hai, permission maangte hi expand hota hai, aur kaam ho jaye to sound + green ho jata hai.
+A Dynamic Island for AI coding agents. Zenviq Island sits at the top of your screen and shows what **Claude Code** and **Google Antigravity** are doing, lets you approve or deny their permission requests in place, and tells you when work is done.
 
-## Kya karta hai
+## Features
 
-| Tumhari need | Kaise |
-|---|---|
-| Claude ko need ho to dikh jaye | `PermissionRequest` hook aate hi island expand + orange pulse + sound |
-| Permission control kar saku | Island par **Allow / Deny / Allow always (this session)** buttons — Claude ko turant jawab jata hai |
-| Activity dikhe | `PreToolUse` / `PostToolUse` — kaunsi file, kaunsa command, kaunsa project, live |
-| Notification / sound | Kaam complete (`Stop`) par green + sound; permission par alag sound + browser notification |
-| Terminal dekhe bina kaam karu | Island hamesha top par rehta hai (Electron mode) |
+- **Live activity:** the current tool, file, or command, the project, and a session timer.
+- **Permission requests in place:** Allow, Deny, or Always allow (Claude Code, current session) without switching to the terminal. A countdown ring shows how long the agent will wait.
+- **Done and failure states:** a chime, a system notification, and a short celebration, after which the island returns to Ready.
+- **Every project:** hooks are installed once at user level, so the island works in any project and any terminal.
+- **Unobtrusive:** drag it anywhere, choose Mini, Normal, or Large, and click through it everywhere except the island itself.
+- **Apple-style motion:** spring-based morphs, blur transitions, and a welcome greeting with the date and time at startup.
+- **Local only:** the server listens on `127.0.0.1` and never auto-approves anything.
 
-## Safety — important
+## Requirements
 
-- **Kabhi auto-allow nahi.** Agar tum 270 sec me click nahi karte, ya island band hai, to hook `{}` bhejta hai aur Claude apna normal terminal prompt dikhata hai.
-- Hook ka `allow` tumhare `deny` rules ko override **nahi** karta (Claude Code docs).
-- Server sirf `127.0.0.1` par chalta hai — internet se koi access nahi.
-- `Allow always` sirf **is session** ke liye hota hai, permanent rule nahi banta.
-- Dusri websites island server ko touch nahi kar sakti (koi CORS nahi, foreign `Origin` → 403), to koi page chupke se Allow nahi bhej sakta.
-- Keyboard shortcuts (Return / Esc / A) tabhi kaam karte hain jab request aane ke **baad** tum island par click ya Tab karo — galti se typing kabhi approve nahi karegi.
+- Node.js 18 or later
+- Claude Code and/or Google Antigravity (a version with hooks support)
+- Windows 10/11 (tested). macOS and Linux are supported by Electron but are less tested.
 
-## Kaise chalaye — 3 steps (Windows)
+## Installation
 
-### Step 1 — Install (ek baar)
-```bat
+```bash
+git clone https://github.com/Samirsain/zenviq-island.git
 cd zenviq-island
 npm install
-```
-
-### Step 2 — Claude Code + Antigravity connect karo (ek baar, saare projects ke liye)
-```bat
 npm run setup
+npm run island -- --autostart
 ```
-- `~/.claude/settings.json` (Claude Code) aur `~/.gemini/config/hooks.json` (Antigravity) me island hooks add hote hain. Baaki settings same rehti hain; pehli baar `*.zenviq-backup` copy banti hai.
-- Phir naya Claude Code session kholo (ya `/hooks` ek baar) aur Antigravity reopen karo.
-- Hatana ho to: `npm run unsetup`.
 
-### Step 3 — Island chalao
-```bat
-npm run island                    REM abhi chalao
-npm run island -- --autostart     REM abhi + har Windows login par apne aap
-```
-Screen ke top par always-on-top island aa jayega. Tray icon (neeche right) se: control page, "Start at login" on/off, Quit.
-Island ke bahar ka area click-through hai — neeche ki windows normal kaam karti hain.
+| Step | What it does |
+|---|---|
+| `npm install` | Installs Electron. |
+| `npm run setup` | Adds the island hooks to `~/.claude/settings.json` (Claude Code) and `~/.gemini/config/hooks.json` (Antigravity). Existing settings are preserved, and a `.zenviq-backup` copy of each file is made before the first change. |
+| `npm run island -- --autostart` | Starts the island and registers it to start at login. Omit `--autostart` to run it once. |
 
-- **On hote hi:** 5 sec ke liye "Welcome, Samir" + greeting, date aur time. Naam `public/index.html` me `USER_NAME` hai.
-- **Move:** island ko drag karke kahin bhi rakho. Top-center ke paas chhodo to wapas notch par snap. Position yaad rehti hai.
-- **Size:** island par right-click (ya tray) → Size: **Mini** (sirf avatar + status) / **Normal** / **Large**. Mini me Done par island nahi khulta; permission request phir bhi khulti hai.
-- **Done ke baad:** celebration ke 6 sec baad island wapas "Ready" mode me.
+After setup, start a new Claude Code session (or open `/hooks` once) and restart Antigravity so the hooks load.
 
-### Kya kya dikhega
-- **Claude Code** (kisi bhi terminal / project me): permission → Allow / Deny / Always allow (is session), activity, Done, notifications.
-- **Antigravity**: agent ke terminal commands (`run_command`) island par Allow / Deny ke liye aate hain. 2 min me jawab nahi diya to Antigravity apna normal prompt dikhata hai. Activity + Done bhi dikhta hai.
-- Browser demo / control page: **http://127.0.0.1:18777** (`npm run demo` se bina Claude ke test).
+## Usage
 
-> Mac/Linux par bhi same commands. `npm test` permission flow ka self-test chalata hai.
+### Island states
+
+| State | What you see |
+|---|---|
+| Ready | Compact pill with the avatar. |
+| Working | Verb and target (for example *Editing …/src/App.tsx*), spinner, session timer. |
+| Permission | The island expands: the requested command, Deny and Allow buttons, and the time remaining. |
+| Allowed / Denied | A green check or red cross for a moment, then back to Working. |
+| Done | A chime, a short expansion with the celebration animation, then back to Ready after 6 seconds. |
+| Failed / Offline | A red indicator and the reason. |
+
+Click the island to expand or collapse its detail view (recent activity and the sound toggle).
+
+### Permissions
+
+- **Claude Code:** every permission request appears on the island. If you do not answer within 4 minutes 30 seconds, Claude Code shows its normal terminal prompt.
+- **Antigravity:** terminal commands (`run_command`) appear on the island. If you do not answer within 2 minutes, Antigravity applies its own policy and prompt. Other tools pass straight through and only show as activity.
+- An approval from the island never overrides an explicit deny rule in either tool.
+
+### Keyboard
+
+| Key | Action |
+|---|---|
+| Return | Allow |
+| Esc | Deny |
+| A | Always allow for this session (Claude Code only) |
+| Space | Expand or collapse |
+
+Shortcuts only answer a request after you click or Tab into the island, so typing in another application can never approve anything.
+
+### Position and size
+
+- **Move:** drag the island anywhere. Drop it near the top centre to snap it back. The position is remembered.
+- **Size:** right-click the island, or use the tray icon, and choose **Mini**, **Normal**, or **Large**. Mini shows only the avatar and status, and does not expand on Done. Permission requests always expand.
+- **Tray menu:** size, move back to top centre, open the control page, start at login, quit.
+
+### Control page and demo
+
+Open `http://127.0.0.1:18777` in a browser to see the island, recent activity, and demo controls. `npm run demo` simulates a session and a permission request without Claude Code.
 
 ## Avatar
 
-Avatar files repo me nahi hain (wo third-party art hai). Island unke bina bhi chalta hai — bas avatar ki jagah khaali black tile aur tray me ek simple pill icon dikhega.
-Apna avatar lagana ho to ye files `public/avatar/` me daalo (square, dark background best lagta hai):
+The avatar art is not included in this repository. Without it, the island shows a plain dark tile and the tray uses a simple pill icon. To add your own, place these files in `public/avatar/` (square, on a dark background):
 
-| File | Kab dikhta hai |
+| File | Used for |
 |---|---|
-| `hatch_dark_still.webp` | still image (fallback, error, reduced motion) |
-| `hatch_dark.mp4` | idle / permission (loop) |
-| `hatch_working_dark.mp4` | kaam chal raha hai (loop) |
-| `hatch_making_something_dark.mp4` | file edit ho rahi hai (loop) |
-| `hatch_milestone_dark.mp4` | Done celebration (ek baar) |
-| `tray.png` | tray icon (32×32) |
+| `hatch_dark_still.webp` | Still image and fallback |
+| `hatch_dark.mp4` | Ready and permission (loop) |
+| `hatch_working_dark.mp4` | Working (loop) |
+| `hatch_making_something_dark.mp4` | Editing files (loop) |
+| `hatch_milestone_dark.mp4` | Done (plays once) |
+| `tray.png` | Tray icon, 32×32 |
 
-## Files
+The name in the startup greeting is set by `USER_NAME` in `public/index.html`.
 
-- `server.js` — local server (Node, zero dependencies), port 18777, localhost only
-- `public/index.html` — island UI: Apple Dynamic Island style (spring morph, blur transitions, call-style Allow/Deny, countdown ring, session timer) + browser control page
-- `public/avatar/` — hatch avatar: still + 4 animated clips (idle, working on laptop, making something, done celebration). Muse se liya hai — personal use theek hai, public/paid build me daalne se pehle rights chahiye
-- `hooks/island-hook.js` — Claude Code + Antigravity hook bridge (stdin JSON → server)
-- `setup.js` — `npm run setup` / `npm run unsetup`: hooks install / remove (Claude Code + Antigravity)
-- `claude-settings.example.json` — `~/.claude/settings.json` me dalne wala hooks block
-- `electron/main.js` — always-on-top frameless window wrapper
-- `demo.js` — bina Claude ke demo chalane ke liye
+## Security
 
-## Kaise kaam karta hai (technical)
+- The server binds to `127.0.0.1:18777` and rejects requests whose `Host` is not local.
+- Cross-origin requests are refused, so other websites open in your browser cannot read or answer a pending request.
+- The island never approves anything on its own. When it is closed, or a request times out, each agent falls back to its normal prompt.
+- "Always allow" adds a rule for the current Claude Code session only.
 
-Claude Code docs ke hisab se (`code.claude.com/docs/en/hooks`):
-- `PermissionRequest` — jab Claude permission maangne wala hota hai, tab fire hota hai. Input: `tool_name`, `tool_input`, `permission_suggestions`. Output: `hookSpecificOutput.decision.behavior = "allow" | "deny"`. `Notification` wala `permission_prompt` iske ~6 sec baad aata hai, isliye instant signal ke liye `PermissionRequest` use kiya hai.
-- `PreToolUse` / `PostToolUse` — activity feed ke liye.
-- `Stop` — kaam complete hone ka signal.
-- `Notification` — `idle_prompt` / `agent_completed` ke liye backup.
-- Hook timeout: PermissionRequest ke liye 300s set hai, hook 270s tak wait karta hai.
+## Uninstall
 
-## Abhi kya nahi hai (Phase 2)
+```bash
+npm run unsetup
+```
 
-- Codex support (TwoCode me hai) — Claude pehle, Codex baad me
-- Robo se screen par sawal puchna ("Ask Robo about your screen")
-- Multiple sessions / projects ka switcher
+This removes the island hooks from both configuration files and leaves everything else untouched. To stop the island from starting at login, untick **Start at login** in the tray menu.
 
-Batao to Phase 2 bhi bana du — ya pehle ye chala ke dekho, kya improve karna hai.
+## Project structure
+
+```
+server.js               Local server: state, permission long-polling, live updates (SSE)
+public/index.html       Island and control page (UI, motion, keyboard)
+hooks/island-hook.js    Hook bridge for Claude Code and Antigravity
+setup.js                Installs and removes the hooks
+electron/main.js        Always-on-top window, drag, sizes, tray, start at login
+electron/preload.js     Minimal bridge between the page and the window
+demo.js                 Simulated session for testing
+test-permission.js      End-to-end permission test (npm test)
+```
+
+## Scripts
+
+| Command | Description |
+|---|---|
+| `npm run island` | Start the island |
+| `npm run setup` | Install hooks for Claude Code and Antigravity |
+| `npm run unsetup` | Remove the hooks |
+| `npm start` | Run only the server (use the island in a browser) |
+| `npm run demo` | Simulate a session with a permission request |
+| `npm test` | Run the permission flow test (server must be running) |
+
+## License
+
+[MIT](LICENSE)
