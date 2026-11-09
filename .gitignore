@@ -1,0 +1,9 @@
+node_modules/
+
+# Avatar art is third-party (Muse "hatch") and is not ours to publish.
+# Put your own files here — see "Avatar" in the README.
+public/avatar/
+
+# Local design-review captures (they show the avatar) and detector cache
+.impeccable/review/
+.impeccable/hook.cache.json

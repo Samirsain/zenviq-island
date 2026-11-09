@@ -1,0 +1,21 @@
+{
+  "name": "zenviq-island",
+  "version": "1.0.0",
+  "description": "Dynamic Island for Claude Code and Google Antigravity — see activity, approve permissions, hear when work is done. Windows / Mac / Linux.",
+  "license": "MIT",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "island": "electron electron/main.js",
+    "setup": "node setup.js",
+    "unsetup": "node setup.js --remove",
+    "demo": "node demo.js",
+    "test": "node test-permission.js"
+  },
+  "devDependencies": {
+    "electron": "^37.10.3"
+  }
+}

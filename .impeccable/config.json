@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "layout-transition",
+        "value": "*",
+        "files": [
+          "public/index.html"
+        ],
+        "createdAt": "2026-11-09T08:06:02.117Z",
+        "reason": "builder decision (not user-confirmed): the Dynamic Island morph must animate real width/height/border-radius of one small isolated element, since transform scale would distort text and corner radii; .page padding-top only animates on expand/collapse"
+      }
+    ]
+  }
+}

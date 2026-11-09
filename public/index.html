@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Zenviq Island</title>
+<style>
+  :root {
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+    --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
+    --ease-out: cubic-bezier(.2, .8, .2, 1);
+    --ease-spring: cubic-bezier(.3, 1.3, .5, 1); /* replaced by a real spring curve from JS */
+    --spring: var(--ease-spring); --spring-d: 520ms; /* set per morph from JS */
+    --island-h: 44px;
+
+    /* The island is hardware-black in every theme. */
+    --i-bg: #000;
+    --i-label: #fff;
+    --i-label-2: rgba(235, 235, 245, .64);
+    --i-label-3: rgba(235, 235, 245, .5);
+    --i-fill: rgba(118, 118, 128, .28);
+    --i-fill-hover: rgba(118, 118, 128, .42);
+    --i-sep: rgba(84, 84, 88, .55);
+    --orange: #ff9f0a;
+    --green: #30d158;
+    --red: #ff453a;
+    --blue: #0a84ff;
+
+    /* Control page: iOS grouped list, light. */
+    --bg: #f2f2f7;
+    --group: #fff;
+    --label: #000;
+    --label-2: rgba(60, 60, 67, .78);
+    --sep: rgba(60, 60, 67, .2);
+    --press: rgba(120, 120, 128, .16);
+    --tint: #007aff;
+    --switch-off: rgba(120, 120, 128, .2);
+    --switch-on: #34c759;
+    --chip: rgba(118, 118, 128, .12);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #000;
+      --group: #1c1c1e;
+      --label: #fff;
+      --label-2: rgba(235, 235, 245, .64);
+      --sep: rgba(84, 84, 88, .6);
+      --press: rgba(120, 120, 128, .3);
+      --tint: #0a84ff;
+      --switch-off: rgba(120, 120, 128, .32);
+      --switch-on: #30d158;
+      --chip: rgba(118, 118, 128, .26);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  body {
+    margin: 0; min-height: 100vh; background: var(--bg); color: var(--label);
+    font: 400 15px/1.45 var(--font); letter-spacing: -.005em;
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  }
+  button { font: inherit; color: inherit; }
+  ::selection { background: rgba(10, 132, 255, .3); }
+  :focus-visible { outline: 2px solid var(--tint); outline-offset: 2px; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  svg.i { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ------------------------------------------------------------------ island */
+  .island {
+    --w: 200px; --h: 44px; --r: 22px; --ax: 6px; --ay: 6px; --as: 32px; --ar: 10px;
+    position: fixed; z-index: 10; top: 14px; left: 50%; translate: -50% 0;
+    width: var(--w); height: var(--h); border-radius: var(--r);
+    background: var(--i-bg); color: var(--i-label);
+    box-shadow:
+      inset 0 0 0 .5px rgba(255, 255, 255, .1),
+      0 16px 36px -12px rgba(0, 0, 0, .55),
+      0 3px 10px rgba(0, 0, 0, .18);
+    overflow: hidden; cursor: pointer; user-select: none; -webkit-user-select: none;
+    font: 500 14px/1.3 var(--font); letter-spacing: -.01em;
+    transition:
+      width var(--spring-d) var(--spring),
+      height var(--spring-d) var(--spring),
+      border-radius var(--spring-d) var(--spring);
+  }
+  .island:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+  .island ::selection { background: rgba(10, 132, 255, .55); color: #fff; }
+
+  /* Shared element: one avatar that travels between the compact and expanded seats. */
+  .avatar {
+    position: absolute; z-index: 2; left: var(--ax); top: var(--ay);
+    width: var(--as); height: var(--as); pointer-events: none;
+    transition:
+      left var(--spring-d) var(--spring), top var(--spring-d) var(--spring),
+      width var(--spring-d) var(--spring), height var(--spring-d) var(--spring);
+  }
+  /* Rounded-square artwork, like Now Playing in the island; the animated avatar is the artwork. */
+  .face {
+    position: absolute; inset: 0; border-radius: var(--ar); overflow: hidden; background: #000;
+    transition: border-radius var(--spring-d) var(--spring);
+  }
+  .face img, .face video {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    scale: 1.3; transform-origin: 50% 32%;
+  }
+  .face img { transition: filter .4s ease; }
+  /* Two video layers blur-crossfade from one clip to the next. */
+  .face video { opacity: 0; filter: blur(6px); transition: opacity .4s ease, filter .45s var(--ease-out); }
+  .face video.on { opacity: 1; filter: blur(0); }
+  .face video[data-clip="work"] { scale: 1.06; transform-origin: 40% 50%; }
+  .face video[data-clip="make"] { scale: 1.5; transform-origin: 50% 48%; }
+  .face video[data-clip="done"] { scale: 1.1; transform-origin: 50% 38%; }
+  [data-tone="error"] .face img, [data-tone="offline"] .face img { filter: grayscale(1) brightness(.7); }
+  .ring {
+    position: absolute; left: -5px; top: -5px; width: calc(100% + 10px); height: calc(100% + 10px);
+    opacity: 0; transition: opacity .3s ease;
+  }
+  .island[data-view="ask"] .ring { opacity: 1; }
+  .ring path { fill: none; stroke-width: 2.2; }
+  .ring .track { stroke: rgba(255, 159, 10, .22); }
+  .ring .bar { stroke: var(--orange); stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear; }
+
+  /* Views blur out, the shape springs, the next view blurs in. */
+  .view {
+    position: absolute; top: 0; left: 50%; translate: -50% 0;
+    opacity: 0; filter: blur(10px); scale: .94; transform-origin: 50% 0;
+    visibility: hidden; pointer-events: none;
+    transition: opacity .17s ease-out, filter .17s ease-out, scale .17s ease-out, visibility 0s linear .17s;
+  }
+  .view.on {
+    opacity: 1; filter: blur(0); scale: 1; visibility: visible; pointer-events: auto;
+    transition:
+      opacity .34s var(--ease-out) .08s, filter .4s var(--ease-out) .06s,
+      scale var(--spring-d) var(--spring) .04s, visibility 0s;
+  }
+
+  /* compact */
+  .v-compact {
+    display: flex; align-items: center; gap: 10px;
+    height: 44px; width: max-content; min-width: 176px; max-width: min(470px, calc(100vw - 24px));
+    padding: 0 15px 0 48px; white-space: nowrap;
+  }
+  .c-text { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .c-verb { font-weight: 600; }
+  .c-detail { color: var(--i-label-2); font-weight: 400; margin-left: 5px; }
+  [data-tone="permission"] .c-verb, [data-tone="permission"] .t-time { color: var(--orange); }
+  [data-tone="allowed"] .c-verb { color: var(--green); }
+  [data-tone="denied"] .c-verb { color: var(--red); }
+  .c-trail { display: flex; align-items: center; gap: 7px; flex: none; color: var(--i-label-2); }
+  .t-time { font: 500 13px/1 var(--font); font-variant-numeric: tabular-nums; }
+  .t-time:empty { display: none; }
+  .t-spin, .t-check, .t-alert, .t-cross { display: none; flex: none; }
+  [data-tone="working"] .t-spin { display: block; }
+  [data-tone="done"] .t-check, [data-tone="allowed"] .t-check { display: block; }
+  [data-tone="denied"] .t-cross { display: block; }
+  [data-tone="error"] .t-alert, [data-tone="offline"] .t-alert { display: block; }
+  .t-spin { width: 16px; height: 16px; animation: spin .8s steps(8) infinite; }
+  @keyframes spin { to { rotate: 360deg; } }
+  .t-check, .t-alert, .t-cross { width: 20px; height: 20px; }
+  .v-detail .t-check { margin-top: 4px; }
+  [data-tone="allowed"] .v-detail .t-check { display: none; }
+  [data-tone="offline"] .t-alert circle { fill: #636366; }
+  .t-check path { stroke-dasharray: 1; animation: draw .45s var(--ease-out) .28s both; }
+  @keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
+  /* expanded: shared */
+  .v-detail, .v-ask { width: min(560px, calc(100vw - 24px)); padding: 18px; }
+  .head { display: flex; align-items: flex-start; gap: 14px; min-height: 64px; }
+  .seat { width: 64px; height: 64px; flex: none; }
+  .head-text { flex: 1; min-width: 0; }
+  .island p { margin: 0; }
+  .capsule {
+    display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 14px;
+    border: 0; border-radius: 999px; background: var(--i-fill); color: var(--i-label);
+    font: 600 13px/1 var(--font); cursor: pointer; white-space: nowrap;
+    transition: background-color .2s ease, scale .3s var(--ease-spring);
+  }
+  .capsule:hover { background: var(--i-fill-hover); }
+  .capsule[hidden] { display: none; }
+  .capsule:active { scale: .95; transition-duration: .08s; }
+  .capsule svg { width: 15px; height: 15px; }
+  .capsule .off-glyph, .capsule.off .on-glyph { display: none; }
+  .capsule.off .off-glyph { display: block; }
+  .island :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  /* expanded: detail */
+  .d-title { font: 600 17px/1.25 var(--font); letter-spacing: -.02em; padding-top: 3px; }
+  .island .d-detail {
+    margin-top: 3px; font: 400 14px/1.4 var(--font); color: var(--i-label-2);
+    overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .d-timer { flex: none; padding-top: 5px; font: 500 15px/1.2 var(--font); font-variant-numeric: tabular-nums; color: var(--i-label-2); }
+  .island .d-meta { margin: 10px 0 0 78px; font-size: 12px; color: var(--i-label-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .d-meta:empty { display: none; }
+  .d-recent { list-style: none; margin: 14px 0 0; padding: 12px 0 0; border-top: .5px solid var(--i-sep); display: grid; gap: 7px; font-size: 12.5px; font-weight: 400; }
+  .d-recent[hidden] { display: none; }
+  .d-recent li { display: flex; gap: 10px; min-width: 0; }
+  .d-recent time { flex: none; color: var(--i-label-3); font-variant-numeric: tabular-nums; }
+  .d-recent span { min-width: 0; color: var(--i-label-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .d-recent b { color: var(--i-label); font-weight: 500; }
+  .d-foot { display: flex; margin-top: 14px; }
+
+  /* expanded: permission (incoming-call layout) */
+  .ask-verb { padding-top: 4px; font: 400 13px/1.3 var(--font); color: var(--i-label-2); }
+  .island .ask-tool { margin-top: 2px; font: 600 19px/1.2 var(--font); letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .actions { display: flex; gap: 12px; flex: none; padding-top: 3px; }
+  .round {
+    width: 46px; height: 46px; border: 0; border-radius: 50%; display: grid; place-items: center;
+    color: #fff; cursor: pointer; transition: scale .3s var(--ease-spring), filter .2s ease;
+  }
+  .round svg { width: 22px; height: 22px; stroke-width: 2.6; }
+  .round:hover { filter: brightness(1.1); }
+  .round:active { scale: .88; transition-duration: .08s; }
+  .deny { background: var(--red); }
+  .allow { background: var(--green); }
+  .code {
+    margin: 14px 0 0; padding: 11px 13px; max-height: 132px; overflow: auto;
+    border-radius: 16px; background: var(--i-fill); color: #fff;
+    font: 400 12.5px/1.5 var(--mono); letter-spacing: 0; white-space: pre-wrap; overflow-wrap: anywhere;
+    user-select: text; -webkit-user-select: text; cursor: text;
+    scrollbar-width: thin; scrollbar-color: rgba(235, 235, 245, .25) transparent;
+  }
+  .ask-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; }
+  .countdown { font: 500 13px/1 var(--font); font-variant-numeric: tabular-nums; color: var(--orange); white-space: nowrap; }
+  .island .ask-meta { display: flex; justify-content: space-between; gap: 14px; margin-top: 12px; font-size: 12px; color: var(--i-label-3); }
+  .ask-meta .cwd { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .keys { flex: none; white-space: nowrap; }
+  .keys kbd { font: 500 11px/1 var(--font); padding: 2px 5px; border-radius: 5px; background: var(--i-fill); color: var(--i-label-2); }
+
+  /* expanded: welcome (the first five seconds after the island turns on) */
+  .v-welcome { width: min(500px, calc(100vw - 24px)); padding: 18px; }
+  .island .w-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .w-title { padding-top: 8px; font: 600 17px/1.25 var(--font); letter-spacing: -.02em; }
+  .island .w-sub { margin-top: 3px; font: 400 14px/1.4 var(--font); color: var(--i-label-2); }
+  .w-time { flex: none; padding-top: 12px; font: 600 32px/1 var(--font-display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+
+  /* Mini size: the pill keeps only the avatar and its status glyph or timer. */
+  html[data-size="mini"] .v-compact { min-width: 0; padding: 0 9px 0 44px; }
+  html[data-size="mini"] .v-compact .c-text { display: none; }
+  .island.dragging { cursor: grabbing; }
+
+  /* --------------------------------------------------------- control page */
+  /* The page makes room as the island grows, on the island's own spring. */
+  .page { max-width: 640px; margin: 0 auto; padding: calc(var(--island-h) + 72px) 16px 72px; transition: padding-top var(--spring-d) var(--spring); }
+  .hero { padding: 0 4px; margin-bottom: 32px; }
+  .hero h1 { margin: 0 0 6px; font: 700 34px/1.12 var(--font-display); letter-spacing: -.025em; text-wrap: balance; }
+  .hero p { margin: 0; max-width: 46ch; font-size: 17px; line-height: 1.4; color: var(--label-2); }
+  .group { margin-bottom: 30px; }
+  .group h2 { margin: 0 0 9px 4px; font: 700 20px/1.25 var(--font-display); letter-spacing: -.02em; }
+  .list { list-style: none; margin: 0; padding: 0; background: var(--group); border-radius: 12px; overflow: hidden; }
+  .row {
+    position: relative; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px;
+    padding: 9px 16px; border: 0; background: transparent; text-align: left;
+  }
+  .row + .row::before { content: ""; position: absolute; top: 0; right: 0; left: var(--inset, 58px); border-top: .5px solid var(--sep); }
+  button.row { cursor: pointer; transition: background-color .4s ease-out; }
+  button.row:active { background: var(--press); transition: none; }
+  button.row:focus-visible { outline-offset: -3px; border-radius: 12px; }
+  .tile { width: 30px; height: 30px; flex: none; display: grid; place-items: center; border-radius: 7px; color: #fff; }
+  .tile svg { width: 18px; height: 18px; }
+  .row-main { flex: 1; min-width: 0; }
+  .row-main b { display: block; font-weight: 500; }
+  .row-main small { display: block; margin-top: 1px; font-size: 13px; line-height: 1.4; color: var(--label-2); }
+  .row-trail { flex: none; color: var(--tint); }
+  .foot { margin: 8px 16px 0; font-size: 13px; line-height: 1.45; color: var(--label-2); }
+  .page code { font: 400 .88em/1 var(--mono); padding: 2px 5px; border-radius: 5px; background: var(--chip); }
+  .page kbd { display: inline-block; min-width: 28px; padding: 3px 7px; border-radius: 6px; background: var(--chip); font: 500 13px/1.2 var(--font); text-align: center; }
+
+  .switch {
+    appearance: none; -webkit-appearance: none; position: relative; flex: none; margin: 0;
+    width: 51px; height: 31px; border-radius: 999px; background: var(--switch-off); cursor: pointer;
+    transition: background-color .25s ease;
+  }
+  .switch::before {
+    content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 999px; background: #fff;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, .15), 0 1px 1px rgba(0, 0, 0, .16), 0 3px 1px rgba(0, 0, 0, .1);
+    transition: translate .34s var(--ease-spring), width .2s ease;
+  }
+  .switch:checked { background: var(--switch-on); }
+  .switch:checked::before { translate: 20px 0; }
+  .switch:active::before { width: 33px; }
+  .switch:checked:active::before { translate: 14px 0; }
+
+  .log { --inset: 16px; }
+  .log-row { align-items: baseline; }
+  .log-row time { flex: none; width: 66px; font-size: 13px; font-variant-numeric: tabular-nums; color: var(--label-2); }
+  .log-row .row-main { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .log-row .row-main span { color: var(--label-2); margin-left: 6px; }
+  .log .empty { color: var(--label-2); }
+  .log .tag { display: inline-block; margin-right: 8px; padding: 1px 6px; border-radius: 5px; background: var(--chip); color: var(--label-2); font-size: 11px; font-weight: 600; vertical-align: 1px; }
+  .keys-list { --inset: 16px; }
+  .keys-list .row { justify-content: space-between; }
+
+  /* Electron window: only the island, on a transparent canvas. */
+  html.island-mode, html.island-mode body { background: transparent; min-height: 0; }
+  html.island-mode .page { display: none; }
+  html.island-mode .island { top: 10px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .view, .view.on { filter: none; scale: 1; transition-property: opacity, visibility; }
+    .t-check path { animation: none; }
+    .switch::before { transition-duration: .01s; }
+  }
+</style>
+</head>
+<body>
+
+<section class="island" id="island" tabindex="0" aria-label="Claude Code status" aria-expanded="false" data-tone="idle">
+  <div class="avatar" id="avatar" aria-hidden="true">
+    <div class="face">
+      <img src="/public/avatar/hatch_dark_still.webp" alt="">
+      <video muted playsinline preload="auto"></video>
+      <video muted playsinline preload="auto"></video>
+    </div>
+    <!-- Rounded-square ring that starts at 12 o'clock, so it drains from the top like a timer. -->
+    <svg class="ring" viewBox="0 0 74 74"><path class="track" d="M37 1.1H52.9A20 20 0 0 1 72.9 21.1V52.9A20 20 0 0 1 52.9 72.9H21.1A20 20 0 0 1 1.1 52.9V21.1A20 20 0 0 1 21.1 1.1Z" /><path class="bar" id="ringBar" d="M37 1.1H52.9A20 20 0 0 1 72.9 21.1V52.9A20 20 0 0 1 52.9 72.9H21.1A20 20 0 0 1 1.1 52.9V21.1A20 20 0 0 1 21.1 1.1Z" pathLength="100" /></svg>
+  </div>
+
+  <div class="view v-compact" id="vCompact">
+    <span class="c-text"><span class="c-verb" id="cVerb">Claude Code</span><span class="c-detail" id="cDetail">Connecting</span></span>
+    <span class="c-trail">
+      <svg class="t-spin" viewBox="0 0 20 20" aria-hidden="true" id="spin"></svg>
+      <svg class="t-check" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#30d158" /><path d="M5.8 10.3l2.8 2.8 5.6-6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" pathLength="1" /></svg>
+      <svg class="t-alert" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#ff453a" /><path d="M10 5.6v5.2M10 14.2v.1" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" /></svg>
+      <svg class="t-cross" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#ff453a" /><path d="M6.9 6.9l6.2 6.2M13.1 6.9l-6.2 6.2" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" /></svg>
+      <span class="t-time" id="cTime"></span>
+    </span>
+  </div>
+
+  <div class="view v-detail" id="vDetail">
+    <div class="head">
+      <div class="seat"></div>
+      <div class="head-text">
+        <p class="d-title" id="dTitle">Claude Code</p>
+        <p class="d-detail" id="dDetail"></p>
+      </div>
+      <svg class="t-check" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#30d158" /><path d="M5.8 10.3l2.8 2.8 5.6-6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" pathLength="1" /></svg>
+      <span class="d-timer" id="dTimer"></span>
+    </div>
+    <p class="d-meta" id="dMeta"></p>
+    <ol class="d-recent" id="dRecent" hidden></ol>
+    <div class="d-foot">
+      <button class="capsule" id="soundBtn" type="button" aria-pressed="true">
+        <svg class="i on-glyph" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" /><path d="M15.5 9.5a3.5 3.5 0 0 1 0 5" /><path d="M18 7a7 7 0 0 1 0 10" /></svg>
+        <svg class="i off-glyph" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" /><path d="M16 10l4 4M20 10l-4 4" /></svg>
+        <span id="soundLabel">Sound on</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="view v-ask" id="vAsk">
+    <div class="head">
+      <div class="seat"></div>
+      <div class="head-text">
+        <p class="ask-verb" id="askVerb">Claude wants to use</p>
+        <p class="ask-tool" id="askTool">Tool</p>
+      </div>
+      <div class="actions">
+        <button class="round deny" id="denyBtn" type="button" aria-label="Deny" title="Deny (Esc)"><svg class="i" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" /></svg></button>
+        <button class="round allow" id="allowBtn" type="button" aria-label="Allow" title="Allow (Return)"><svg class="i" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></button>
+      </div>
+    </div>
+    <pre class="code" id="askCode" tabindex="0" aria-label="Requested input"></pre>
+    <div class="ask-foot">
+      <button class="capsule" id="alwaysBtn" type="button" title="Allow always (A)"><span>Always allow <span id="alwaysTool">this tool</span> this session</span></button>
+      <span class="countdown" id="countdown" title="When this runs out, Claude falls back to its terminal prompt"></span>
+    </div>
+    <p class="ask-meta"><span class="cwd" id="askCwd"></span><span class="keys"><kbd>Return</kbd> Allow · <kbd>Esc</kbd> Deny<span id="keyAlways"> · <kbd>A</kbd> Always</span></span></p>
+  </div>
+
+  <div class="view v-welcome" id="vWelcome">
+    <div class="head">
+      <div class="seat"></div>
+      <div class="head-text">
+        <p class="w-title" id="wTitle">Welcome</p>
+        <p class="w-sub" id="wSub"></p>
+      </div>
+      <span class="w-time" id="wTime"></span>
+    </div>
+  </div>
+</section>
+
+<p class="sr" id="live" role="status" aria-live="polite"></p>
+
+<main class="page">
+  <header class="hero">
+    <h1>Zenviq Island</h1>
+    <p>Claude Code and Antigravity activity and permission requests, live at the top of your screen.</p>
+  </header>
+
+  <section class="group" aria-labelledby="h-try">
+    <h2 id="h-try">Try it</h2>
+    <div class="list">
+      <button class="row" type="button" data-demo="permission">
+        <span class="tile" style="background:#ff9500"><svg class="i" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9.5" rx="2" /><path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3" /></svg></span>
+        <span class="row-main"><b>Permission request</b></span><span class="row-trail">Run</span>
+      </button>
+      <button class="row" type="button" data-demo="working">
+        <span class="tile" style="background:#007aff"><svg class="i" viewBox="0 0 24 24"><path d="M13 3 5 13.5h6L10 21l8-10.5h-6z" /></svg></span>
+        <span class="row-main"><b>Working session</b></span><span class="row-trail">Run</span>
+      </button>
+      <label class="row">
+        <span class="tile" style="background:#ff2d55"><svg class="i" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" /><path d="M15.5 9.5a3.5 3.5 0 0 1 0 5" /><path d="M18 7a7 7 0 0 1 0 10" /></svg></span>
+        <span class="row-main"><b>Sound</b></span>
+        <input class="switch" id="soundSwitch" type="checkbox" role="switch" checked>
+      </label>
+      <label class="row">
+        <span class="tile" style="background:#8e8e93"><svg class="i" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-6.5 6.5M10 20H4v-6M4 20l6.5-6.5" /></svg></span>
+        <span class="row-main"><b>Expand island</b></span>
+        <input class="switch" id="expandSwitch" type="checkbox" role="switch">
+      </label>
+    </div>
+    <p class="foot">Demos run on the local server. No Claude session needed.</p>
+  </section>
+
+  <section class="group" aria-labelledby="h-activity">
+    <h2 id="h-activity">Activity</h2>
+    <ol class="list log" id="log"><li class="row empty">No activity yet. Run a demo or start Claude Code.</li></ol>
+  </section>
+
+  <section class="group" aria-labelledby="h-how">
+    <h2 id="h-how">How it works</h2>
+    <ol class="list">
+      <li class="row">
+        <span class="tile" style="background:#8e8e93"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12" rx="2" /><path d="M8.5 20h7M12 16.5V20" /></svg></span>
+        <span class="row-main"><b>Runs on your PC</b><small>The server listens on <code>127.0.0.1:18777</code>. Localhost only, never the internet.</small></span>
+      </li>
+      <li class="row">
+        <span class="tile" style="background:#5856d6"><svg class="i" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" /></svg></span>
+        <span class="row-main"><b>Claude Code and Antigravity hooks report in</b><small>Installed once with <code>npm run setup</code>, so every project on this PC reports here: permission requests, tools, and when work stops.</small></span>
+      </li>
+      <li class="row">
+        <span class="tile" style="background:#ff9500"><svg class="i" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9.5" rx="2" /><path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3" /></svg></span>
+        <span class="row-main"><b>Permission opens the island</b><small>With a sound and a notification. Allow or Deny goes straight back to Claude.</small></span>
+      </li>
+      <li class="row">
+        <span class="tile" style="background:#007aff"><svg class="i" viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4" /></svg></span>
+        <span class="row-main"><b>Activity, live</b><small>Which file Claude is reading, which command it is running, in which project.</small></span>
+      </li>
+      <li class="row">
+        <span class="tile" style="background:#34c759"><svg class="i" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span>
+        <span class="row-main"><b>Done turns green</b><small>With a chime, so you can keep working without watching the terminal.</small></span>
+      </li>
+    </ol>
+    <p class="foot">The island never allows anything on its own. If you don't answer within 4:30, Claude shows its normal terminal prompt. To connect Claude Code, add the hooks from the README to <code>~/.claude/settings.json</code>.</p>
+  </section>
+
+  <section class="group" aria-labelledby="h-keys">
+    <h2 id="h-keys">Keyboard</h2>
+    <div class="list keys-list">
+      <div class="row"><span>Allow</span><kbd>Return</kbd></div>
+      <div class="row"><span>Deny</span><kbd>Esc</kbd></div>
+      <div class="row"><span>Always allow this session</span><kbd>A</kbd></div>
+      <div class="row"><span>Expand or collapse</span><kbd>Space</kbd></div>
+    </div>
+    <p class="foot">Shortcuts answer a request only after you click or Tab into the island, so typing in another app can never approve anything.</p>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const island = $('island');
+  const views = { compact: $('vCompact'), detail: $('vDetail'), ask: $('vAsk'), welcome: $('vWelcome') };
+  const USER_NAME = 'Samir'; // shown in the welcome when the island turns on
+  let welcomeUntil = Date.now() + 5200;
+  const ISLAND_MODE = /Electron/i.test(navigator.userAgent) || new URLSearchParams(location.search).has('island');
+  document.documentElement.classList.toggle('island-mode', ISLAND_MODE);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const WAIT_MS = 270000; // keep in sync with PERMISSION_WAIT_MS in server.js
+
+  // ---- Apple-style springs, sampled into CSS linear() easings ----------------
+  function spring(response, damping) {
+    const w = 2 * Math.PI / response, z = damping, wd = w * Math.sqrt(1 - z * z);
+    const x = (t) => 1 - Math.exp(-z * w * t) * (Math.cos(wd * t) + (z * w / wd) * Math.sin(wd * t));
+    let end = 0.1;
+    while (end < 2.5 && ![0, .03, .06, .09].every((d) => Math.abs(1 - x(end + d)) < 0.002)) end += 0.02;
+    const pts = [];
+    for (let i = 0; i <= 48; i++) pts.push(i === 48 ? 1 : +x(end * i / 48).toFixed(4));
+    return { easing: `linear(${pts.join(', ')})`, ms: Math.round(end * 1000) };
+  }
+  const SPR = CSS.supports('transition-timing-function', 'linear(0, 1)')
+    ? { open: spring(0.55, 0.74), close: spring(0.42, 0.92) }
+    : { open: { easing: 'cubic-bezier(.3, 1.25, .5, 1)', ms: 520 }, close: { easing: 'cubic-bezier(.2, .8, .2, 1)', ms: 420 } };
+  const STILL = { easing: 'ease', ms: 200 };
+  document.documentElement.style.setProperty('--ease-spring', SPR.open.easing);
+
+  // iOS activity indicator: 8 spokes, brightest leads clockwise.
+  $('spin').innerHTML = [1, .85, .7, .58, .47, .38, .3, .24].map((o, i) =>
+    `<line x1="10" y1="2.6" x2="10" y2="6.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="${o}" transform="rotate(${-i * 45} 10 10)"/>`).join('');
+
+  // ---- prefs + sound + notifications -----------------------------------------
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  };
+  let soundOn = store.get('zi.sound', true);
+  let actx = null;
+  const audio = () => (actx ||= new (window.AudioContext || window.webkitAudioContext)());
+  addEventListener('pointerdown', () => { try { audio().resume(); } catch {} }, { passive: true });
+  function tone(freq, at, dur, peak = 0.09) {
+    const ctx = audio(), t = ctx.currentTime + at, o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sine'; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(peak, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  function chime(kind) {
+    if (!soundOn) return;
+    try {
+      if (kind === 'permission') { tone(880, 0, 0.22); tone(1174.66, 0.17, 0.32); }
+      else { tone(523.25, 0, 0.2); tone(659.25, 0.1, 0.22); tone(783.99, 0.2, 0.38); }
+    } catch {}
+  }
+  function notify(title, body) {
+    if (!('Notification' in window)) return;
+    try {
+      if (Notification.permission === 'granted') new Notification(title, { body, silent: soundOn });
+      else if (Notification.permission !== 'denied') Notification.requestPermission().catch(() => {});
+    } catch {}
+  }
+
+  // ---- words ------------------------------------------------------------------
+  const EDIT = /^(Edit|MultiEdit|Write|NotebookEdit)$/;
+  const FILE = /^(Read|Edit|MultiEdit|Write|NotebookEdit)$/;
+  function verbFor(tool) {
+    if (/^(Bash|PowerShell|BashOutput|Terminal)$/.test(tool)) return 'Running';
+    if (tool === 'Read') return 'Reading';
+    if (tool === 'Write') return 'Writing';
+    if (EDIT.test(tool)) return 'Editing';
+    if (/^(Grep|Glob|LS|Search)$/.test(tool)) return 'Searching';
+    if (/^Web/.test(tool)) return 'Browsing';
+    if (/^(Task|Agent)$/.test(tool)) return 'Delegating';
+    if (/^mcp__/.test(tool)) return 'Using';
+    return tool;
+  }
+  function askVerb(tool) {
+    if (/^(Bash|PowerShell|Terminal)$/.test(tool)) return 'run';
+    if (EDIT.test(tool)) return 'edit';
+    if (tool === 'Read') return 'read';
+    if (/^Web/.test(tool)) return 'open';
+    return 'use';
+  }
+  const shortPath = (p) => { const parts = p.split(/[\\/]/).filter(Boolean); return parts.length > 2 ? '…/' + parts.slice(-2).join('/') : p; };
+  const fmt = (ms) => { const s = Math.max(0, Math.floor(ms / 1000)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  const clock = (iso) => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }); };
+  const EVENTS = {
+    SessionStart: 'Session started', SessionEnd: 'Session ended', UserPromptSubmit: 'Prompt sent',
+    PreToolUse: 'Tool started', PostToolUse: 'Tool finished', PostToolUseFailure: 'Tool failed',
+    PermissionRequest: 'Permission requested', Notification: 'Notification', Stop: 'Finished', SubagentStop: 'Subagent finished',
+  };
+  function describe(h) {
+    const name = h.type === 'Decision' ? (h.behavior === 'allow' ? (h.always ? 'Always allowed' : 'Allowed') : 'Denied') : (EVENTS[h.type] || h.type);
+    const det = h.detail && String(h.detail).replace(/^(Done|Failed): /, '');
+    const shown = det && FILE.test(h.tool || '') && /[\\/]/.test(det) ? shortPath(det) : det;
+    const sub = [h.tool, shown, h.project, h.notification_type].filter(Boolean).join(' · ');
+    return { time: clock(h.at), name, sub, demo: !!h.demo };
+  }
+  function codeFor(input) {
+    const inp = input || {};
+    const text = typeof inp.command === 'string' ? inp.command : JSON.stringify(inp, null, 2);
+    return text.length > 600 ? text.slice(0, 600) + '…' : text;
+  }
+
+  // ---- state --------------------------------------------------------------------
+  let S = { status: 'idle', history: [] };
+  let expanded = false, expandedBy = null, offline = false, flash = null;
+  // Keyboard answers need a deliberate act: a click or Tab into the island after the request
+  // appeared. Window focus alone (or typing meant for another app) can never approve anything.
+  let shownAt = 0, engagedAt = 0;
+  let skew = 0, view = null, clip = null, booted = false;
+  // Outcome beats: Allowed / Denied flash in colour, Done briefly opens the island for the celebration.
+  let outcomeKey = '', outcomeUntil = 0, doneUntil = 0;
+  const base = (p) => (p ? String(p).split(/[\\/]/).filter(Boolean).pop() : '');
+  // Which agent is talking: Claude Code or Google Antigravity (set by the hook bridge).
+  const agent = () => (((S.pending && S.pending.source) || S.source) === 'antigravity' ? 'Antigravity' : 'Claude');
+
+  function model() {
+    if (flash) return { tone: 'error', verb: flash.verb, short: flash.detail, title: flash.verb, detail: flash.detail, clip: 'still' };
+    if (offline) return { tone: 'offline', verb: 'Offline', short: 'Island server not running', title: 'Island server offline', detail: 'Start it with node server.js. The island reconnects on its own.', clip: 'still' };
+    const s = S, tool = s.tool || '', raw = String(s.detail || '');
+    const pre = (raw.match(/^(Done|Failed|Allowed|Denied): /) || [])[1];
+    const full = pre ? raw.slice(pre.length + 2) : raw;
+    // MCP tools arrive as mcp__server__tool_name: show "Using · tool name", not the raw id and arg keys.
+    const mcp = /^mcp__/.test(tool) ? tool.split('__').pop().replace(/_/g, ' ') : '';
+    const short = mcp || (FILE.test(tool) && /[\\/]/.test(full) ? shortPath(full) : full);
+    switch (s.status) {
+      case 'needs-permission': {
+        const t = (s.pending && s.pending.tool_name) || tool || 'a tool';
+        return { tone: 'permission', verb: 'Permission', short: t, title: agent() + ' needs permission', detail: t, clip: 'idle' };
+      }
+      case 'working': {
+        const answered = pre === 'Allowed' || pre === 'Denied';
+        if (answered && Date.now() < outcomeUntil) {
+          return { tone: pre === 'Allowed' ? 'allowed' : 'denied', verb: pre, short: full, title: pre, detail: full, clip: 'work' };
+        }
+        const verb = pre === 'Done' ? 'Finished' : !answered && tool ? verbFor(tool) : 'Working';
+        const rest = s.project || agent() + ' is working';
+        return { tone: 'working', verb, short: answered ? rest : short || rest, title: verb, detail: answered ? rest : full || rest, clip: EDIT.test(tool) && !pre ? 'make' : 'work' };
+      }
+      case 'done': return { tone: 'done', verb: 'Done', short: full || 'Task complete', title: 'Done', detail: full || 'Task complete', clip: 'done' };
+      case 'error': return { tone: 'error', verb: 'Failed', short: short || tool, title: tool ? tool + ' failed' : 'Something failed', detail: full, clip: 'still' };
+      default: {
+        const name = agent() === 'Antigravity' ? 'Antigravity' : 'Claude Code';
+        return { tone: 'idle', verb: name, short: raw || 'Ready', title: name, detail: raw ? raw + '.' : 'Waiting for a session. Start Claude Code or Antigravity in any project.', clip: 'idle' };
+      }
+    }
+  }
+
+  function render(s) {
+    const prev = S; S = s; offline = false;
+    const live = booted; booted = true; // no celebration replays on page load
+    const oKey = /^(Allowed|Denied): /.test(String(s.detail || '')) ? String(s.lastEventAt) : '';
+    if (oKey && oKey !== outcomeKey) { outcomeKey = oKey; if (live) outcomeUntil = Date.now() + 2600; }
+    skew = (s.now || Date.now()) - Date.now();
+    const pid = s.pending && s.pending.id, prevPid = prev.pending && prev.pending.id;
+    if (s.status === 'needs-permission' && pid && pid !== prevPid) {
+      if (!expanded) { expanded = true; expandedBy = 'auto'; }
+      shownAt = Date.now();
+      chime('permission'); nudge();
+      notify(agent() + ' needs permission', [s.pending.tool_name, s.pending.detail].filter(Boolean).join(' — '));
+    }
+    if (!pid && prevPid && expandedBy === 'auto') { expanded = false; expandedBy = null; }
+    if (s.status === 'done' && prev.status !== 'done' && live) {
+      chime('done');
+      // Mini means "don't disturb": the check and chime say it, the island stays small.
+      if (!expanded && document.documentElement.dataset.size !== 'mini') { expanded = true; expandedBy = 'auto'; doneUntil = Date.now() + 2800; }
+    }
+    if (s.status === 'error' && prev.status !== 'error') shake();
+    renderLog(s.history || []);
+    apply();
+  }
+
+  function apply() {
+    const m = model(), p = S.pending;
+    island.dataset.tone = m.tone;
+    setText($('cVerb'), m.verb); setText($('cDetail'), m.short);
+    setText($('dTitle'), m.title); setText($('dDetail'), m.detail);
+    $('dMeta').textContent = offline ? '' : S.project || '';
+    if (p) {
+      setText($('askVerb'), agent() + ' wants to ' + askVerb(p.tool_name));
+      $('alwaysBtn').hidden = $('keyAlways').hidden = p.source === 'antigravity'; // Antigravity has no session rules to add
+      setText($('askTool'), p.tool_name);
+      $('alwaysTool').textContent = p.tool_name;
+      const code = codeFor(p.tool_input);
+      if ($('askCode').textContent !== code) $('askCode').textContent = code;
+      $('askCwd').textContent = base(p.cwd) || S.project || '';
+    }
+    setClip(m.clip);
+    island.setAttribute('aria-expanded', String(expanded));
+    $('expandSwitch').checked = expanded;
+    announce(m);
+    tick();
+    // A waiting request always wins; the welcome only plays while nothing needs you.
+    const asking = p && !offline && !flash;
+    morph(welcomeUntil && !asking ? 'welcome' : !expanded ? 'compact' : asking ? 'ask' : 'detail');
+  }
+
+  // Blur-replace, the way the island swaps its text.
+  function setText(el, t) {
+    t = String(t == null ? '' : t);
+    if (el.textContent === t) return;
+    el.textContent = t;
+    if (!reduce.matches && el.closest('.view.on')) {
+      el.animate([{ opacity: 0, filter: 'blur(5px)' }, { opacity: 1, filter: 'blur(0px)' }], { duration: 300, easing: 'cubic-bezier(.2, .8, .2, 1)' });
+    }
+  }
+
+  // ---- the morph ----------------------------------------------------------------
+  function morph(name) {
+    const el = views[name];
+    const w = Math.ceil(el.offsetWidth), h = Math.ceil(el.offsetHeight);
+    const cw = parseFloat(island.style.getPropertyValue('--w')) || 0;
+    const ch = parseFloat(island.style.getPropertyValue('--h')) || 0;
+    if (name === view && w === cw && h === ch) return;
+    const grow = w * h >= cw * ch;
+    const sp = reduce.matches ? STILL : grow ? SPR.open : SPR.close;
+    const big = name !== 'compact';
+    const st = island.style, root = document.documentElement.style;
+    root.setProperty('--spring', sp.easing); root.setProperty('--spring-d', sp.ms + 'ms');
+    root.setProperty('--island-h', h + 'px');
+    st.setProperty('--w', w + 'px'); st.setProperty('--h', h + 'px');
+    st.setProperty('--r', big ? '34px' : h / 2 + 'px');
+    st.setProperty('--ax', big ? '18px' : '6px'); st.setProperty('--ay', big ? '18px' : '6px');
+    st.setProperty('--as', big ? '64px' : '32px'); st.setProperty('--ar', big ? '16px' : '10px');
+    if (name !== view) {
+      for (const k in views) views[k].classList.toggle('on', k === name);
+      island.dataset.view = name; view = name;
+    }
+    setFrame(h, grow ? 0 : sp.ms);
+  }
+
+  // Electron reads this to size its transparent window and to make it click-through outside the island.
+  let frameH = 0, frameTimer = 0;
+  function setFrame(h, delay) {
+    const need = Math.ceil(h) + 10 + 44;
+    clearTimeout(frameTimer);
+    if (need >= frameH || !delay) frameH = need;
+    else frameTimer = setTimeout(() => { frameH = need; }, delay + 80);
+  }
+  window.islandGeometry = () => {
+    const r = island.getBoundingClientRect();
+    return { x: r.left, y: r.top, w: r.width, h: r.height, frameH };
+  };
+
+  function nudge() {
+    if (reduce.matches) return;
+    island.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.06)', offset: 0.28 }, { transform: 'scale(.985)', offset: 0.6 }, { transform: 'scale(1)' }],
+      { duration: 640, easing: 'ease-out' });
+  }
+  function shake() {
+    if (reduce.matches) return;
+    island.animate(['0', '-9px', '8px', '-6px', '4px', '-2px', '0'].map((x) => ({ transform: `translateX(${x})` })),
+      { duration: 460, easing: 'cubic-bezier(.36, .07, .19, .97)' });
+  }
+
+  // ---- avatar clips ---------------------------------------------------------------
+  const CLIPS = {
+    idle: '/public/avatar/hatch_dark.mp4',
+    work: '/public/avatar/hatch_working_dark.mp4',
+    make: '/public/avatar/hatch_making_something_dark.mp4',
+    done: '/public/avatar/hatch_milestone_dark.mp4',
+  };
+  // Videos are optional: check once which ones exist, use the still for the rest.
+  const available = new Set();
+  Promise.all(Object.values(CLIPS).map((src) => fetch(src, { headers: { Range: 'bytes=0-0' } })
+    .then((r) => { if (r.ok) available.add(src); }).catch(() => {})))
+    .then(() => { if (available.size) { clip = null; apply(); } });
+  const layers = [...document.querySelectorAll('.face video')];
+  let front = 0;
+  function setClip(name) {
+    if (reduce.matches) name = 'still';
+    if (name === clip) return;
+    clip = name;
+    const src = CLIPS[name];
+    if (!src || !available.has(src)) { layers.forEach((v) => v.classList.remove('on')); return; }
+    // Load the next clip underneath, then blur-crossfade it over the current one.
+    const next = layers[1 - front], prev = layers[front];
+    next.onplaying = () => {
+      next.onplaying = null;
+      if (clip !== name) return;
+      next.classList.add('on'); prev.classList.remove('on');
+      front = 1 - front;
+      setTimeout(() => { if (!prev.classList.contains('on')) prev.pause(); }, 500);
+    };
+    next.dataset.clip = name;
+    next.loop = name !== 'done';
+    next.src = src;
+    const p = next.play();
+    if (p) p.catch(() => {});
+  }
+
+  // ---- clocks --------------------------------------------------------------------
+  function tick() {
+    const s = S, now = Date.now() + skew;
+    const live = !offline && !flash && s.startedAt && s.status !== 'idle';
+    const session = live ? fmt((s.status === 'done' ? s.lastEventAt : now) - s.startedAt) : '';
+    let left = '';
+    if (s.pending && !offline) {
+      const total = s.pending.waitMs || WAIT_MS;
+      const rem = total - (now - s.pending.receivedAt);
+      left = fmt(rem);
+      $('ringBar').style.strokeDashoffset = String(100 * (1 - Math.max(0, rem) / total));
+    }
+    const trail = s.status === 'needs-permission' && !offline && !flash ? left : session;
+    if ($('cTime').textContent !== trail) $('cTime').textContent = trail;
+    $('dTimer').textContent = session;
+    $('countdown').textContent = left ? left + ' left' : '';
+    if (welcomeUntil) {
+      const d = new Date(), h = d.getHours();
+      const greet = h < 5 || h >= 22 ? 'Good night' : h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+      $('wTitle').textContent = `Welcome, ${USER_NAME}`;
+      $('wSub').textContent = `${greet} · ${d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}`;
+      $('wTime').textContent = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    }
+  }
+  setInterval(() => {
+    const now = Date.now();
+    if (flash && now >= flash.until) { flash = null; apply(); return; }
+    if (outcomeUntil && now >= outcomeUntil) { outcomeUntil = 0; apply(); return; }
+    if (welcomeUntil && now >= welcomeUntil) { welcomeUntil = 0; apply(); return; }
+    if (doneUntil && now >= doneUntil) {
+      doneUntil = 0;
+      if (expandedBy === 'auto' && S.status === 'done') { expanded = false; expandedBy = null; }
+      apply(); return;
+    }
+    tick();
+    if (view) morph(view);
+  }, 1000);
+
+  // ---- log -------------------------------------------------------------------------
+  let logKey = '';
+  function renderLog(hist) {
+    const items = hist.slice(0, 12);
+    const key = items.map((h) => h.at + h.type).join('|');
+    if (key === logKey) return;
+    const prevFirst = logKey.split('|')[0];
+    logKey = key;
+    const list = $('log'), rec = $('dRecent');
+    list.textContent = ''; rec.textContent = '';
+    rec.hidden = !items.length;
+    if (!items.length) {
+      const li = document.createElement('li');
+      li.className = 'row empty'; li.textContent = 'No activity yet. Run a demo or start Claude Code.';
+      list.append(li);
+      return;
+    }
+    const idx = prevFirst ? items.findIndex((h) => h.at + h.type === prevFirst) : 0;
+    const fresh = idx < 0 ? 0 : idx;
+    items.forEach((h, i) => {
+      const d = describe(h);
+      const li = document.createElement('li'); li.className = 'row log-row';
+      const t = document.createElement('time'); t.dateTime = h.at; t.textContent = d.time;
+      const main = document.createElement('span'); main.className = 'row-main'; main.textContent = d.name;
+      if (d.demo) { const tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = 'Demo'; main.prepend(tag); }
+      if (d.sub) { const sub = document.createElement('span'); sub.textContent = d.sub; main.append(sub); }
+      li.append(t, main); list.append(li);
+      if (i < fresh && !reduce.matches) {
+        li.animate([{ opacity: 0, transform: 'translateY(-6px)' }, { opacity: 1, transform: 'none' }],
+          { duration: 340, delay: i * 40, easing: 'cubic-bezier(.2, .8, .2, 1)', fill: 'backwards' });
+      }
+      if (i < 3) {
+        const r = document.createElement('li');
+        const rt = document.createElement('time'); rt.textContent = d.time;
+        const rs = document.createElement('span'); const b = document.createElement('b'); b.textContent = d.name;
+        rs.append(b, (d.demo ? ' · Demo' : '') + (d.sub ? ' · ' + d.sub : ''));
+        r.append(rt, rs); rec.append(r);
+      }
+    });
+  }
+
+  let lastAnnounce = '';
+  function announce(m) {
+    const key = m.tone + '|' + m.verb;
+    if (key === lastAnnounce) return;
+    lastAnnounce = key;
+    $('live').textContent = m.tone === 'permission' ? `${agent()} needs permission to use ${m.short}` : `${m.verb}. ${m.short}`;
+  }
+
+  // ---- actions ----------------------------------------------------------------------
+  function toggle(force) {
+    const next = typeof force === 'boolean' ? force : !expanded;
+    if (next === expanded) return;
+    expanded = next; expandedBy = next ? 'user' : null;
+    if (next && S.pending) shownAt = Date.now();
+    apply();
+  }
+  function showFlash(verb, detail) {
+    flash = { verb, detail, until: Date.now() + 2800 };
+    expanded = false; expandedBy = null;
+    shake(); apply();
+  }
+  let busy = false;
+  async function decide(behavior, always) {
+    const p = S.pending; // answer exactly the request on screen, never a newer one
+    if (busy) return;
+    if (!p) return showFlash('Nothing to answer', 'That request was already answered or expired');
+    busy = true;
+    try {
+      const r = await fetch('/api/decision', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: p.id, behavior, always }) });
+      const j = await r.json().catch(() => ({}));
+      if (!j.ok) showFlash('Couldn’t answer', 'The request expired or was already answered');
+    } catch { showFlash('Couldn’t answer', 'Island server is offline'); }
+    finally { busy = false; }
+  }
+  function setSound(on) {
+    soundOn = on; store.set('zi.sound', on);
+    $('soundSwitch').checked = on;
+    $('soundBtn').setAttribute('aria-pressed', String(on));
+    $('soundBtn').classList.toggle('off', !on);
+    $('soundLabel').textContent = on ? 'Sound on' : 'Sound off';
+  }
+
+  island.addEventListener('pointerdown', (e) => { if (e.isTrusted) engagedAt = Date.now(); });
+  addEventListener('keyup', (e) => { if (e.isTrusted && e.key === 'Tab' && island.contains(document.activeElement)) engagedAt = Date.now(); });
+  // Size comes from the Electron shell (tray / right-click menu); the browser page stays Normal.
+  window.setIslandSize = (size) => { document.documentElement.dataset.size = size; apply(); };
+
+  // Drag (Electron only): press and move more than a few pixels, and the window follows the
+  // cursor. A drag never counts as a click, so it doesn't expand or collapse the island.
+  const host = window.islandHost;
+  let press = null, dragging = false, swallowClick = false;
+  if (host) {
+    island.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 || e.target.closest('button, .code')) return;
+      press = { x: e.screenX, y: e.screenY, id: e.pointerId };
+    });
+    island.addEventListener('pointermove', (e) => {
+      if (!press || dragging || Math.hypot(e.screenX - press.x, e.screenY - press.y) < 5) return;
+      dragging = true;
+      island.setPointerCapture(press.id);
+      island.classList.add('dragging');
+      host.dragStart();
+    });
+    const release = () => {
+      if (dragging) { host.dragEnd(); swallowClick = true; island.classList.remove('dragging'); }
+      press = null; dragging = false;
+    };
+    island.addEventListener('pointerup', release);
+    island.addEventListener('pointercancel', release);
+    island.addEventListener('contextmenu', (e) => { e.preventDefault(); host.menu(); });
+  }
+
+  island.addEventListener('click', (e) => {
+    if (swallowClick) { swallowClick = false; return; }
+    if (e.target.closest('button, .code')) return;
+    if (String(getSelection())) return;
+    toggle();
+  });
+  $('allowBtn').addEventListener('click', () => decide('allow', false));
+  $('denyBtn').addEventListener('click', () => decide('deny', false));
+  $('alwaysBtn').addEventListener('click', () => decide('allow', true));
+  $('soundBtn').addEventListener('click', () => setSound(!soundOn));
+  $('soundSwitch').addEventListener('change', (e) => setSound(e.target.checked));
+  $('expandSwitch').addEventListener('change', (e) => toggle(e.target.checked));
+  document.querySelectorAll('[data-demo]').forEach((b) => b.addEventListener('click', () => {
+    fetch('/api/demo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ scenario: b.dataset.demo }) })
+      .catch(() => showFlash('Demo failed', 'Island server is offline'));
+  }));
+  addEventListener('keydown', (e) => {
+    if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+    const t = e.target;
+    if (t && t.closest && t.closest('button, input, textarea, select, [contenteditable]')) return;
+    if (view === 'ask' && S.pending && e.isTrusted && engagedAt > shownAt && island.contains(document.activeElement)) {
+      if (e.key === 'Enter') { e.preventDefault(); return decide('allow', false); }
+      if (e.key === 'Escape') { e.preventDefault(); return decide('deny', false); }
+      if ((e.key === 'a' || e.key === 'A') && !$('alwaysBtn').hidden) { e.preventDefault(); return decide('allow', true); }
+    }
+    if (t === island && (e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); toggle(); }
+    else if (e.key === 'Escape' && expanded && view !== 'ask') toggle(false);
+  });
+
+  // ---- live updates: SSE, with polling as the safety net -----------------------------
+  try {
+    const es = new EventSource('/api/events');
+    es.onmessage = (e) => { try { render(JSON.parse(e.data)); } catch {} };
+  } catch {}
+  async function poll() {
+    try { const r = await fetch('/api/state', { cache: 'no-store' }); render(await r.json()); }
+    catch { if (!offline) { offline = true; apply(); } }
+  }
+  setSound(soundOn);
+  apply();
+  poll();
+  setInterval(poll, 3000);
+})();
+</script>
+</body>
+</html>

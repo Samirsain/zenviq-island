@@ -1,0 +1,880 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-09T16:33:30.805Z",
+  "title": "Design System: Zenviq Island",
+  "extensions": {
+    "colorMeta": {
+      "island-black": {
+        "role": "primary",
+        "displayName": "Hardware Black",
+        "canonical": "#000000",
+        "tonalRamp": [
+          "oklch(15.0% 0.000 0.0)",
+          "oklch(26.4% 0.000 0.0)",
+          "oklch(37.9% 0.000 0.0)",
+          "oklch(49.3% 0.000 0.0)",
+          "oklch(60.7% 0.000 0.0)",
+          "oklch(72.1% 0.000 0.0)",
+          "oklch(83.6% 0.000 0.0)",
+          "oklch(95.0% 0.000 0.0)"
+        ],
+        "oklch": "oklch(0.0% 0.000 0.0)"
+      },
+      "island-label": {
+        "role": "neutral",
+        "displayName": "Island Label",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15.0% 0.000 89.9)",
+          "oklch(26.4% 0.000 89.9)",
+          "oklch(37.9% 0.000 89.9)",
+          "oklch(49.3% 0.000 89.9)",
+          "oklch(60.7% 0.000 89.9)",
+          "oklch(72.1% 0.000 89.9)",
+          "oklch(83.6% 0.000 89.9)",
+          "oklch(95.0% 0.000 89.9)"
+        ],
+        "oklch": "oklch(100.0% 0.000 89.9)"
+      },
+      "island-label-secondary": {
+        "role": "neutral",
+        "displayName": "Island Secondary Label",
+        "canonical": "rgba(235, 235, 245, .64)",
+        "tonalRamp": [
+          "oklch(15.0% 0.013 286.1)",
+          "oklch(26.4% 0.013 286.1)",
+          "oklch(37.9% 0.013 286.1)",
+          "oklch(49.3% 0.013 286.1)",
+          "oklch(60.7% 0.013 286.1)",
+          "oklch(72.1% 0.013 286.1)",
+          "oklch(83.6% 0.013 286.1)",
+          "oklch(95.0% 0.013 286.1)"
+        ],
+        "note": "Translucent (alpha 0.64); composites over its surface."
+      },
+      "island-label-tertiary": {
+        "role": "neutral",
+        "displayName": "Island Tertiary Label",
+        "canonical": "rgba(235, 235, 245, .5)",
+        "tonalRamp": [
+          "oklch(15.0% 0.013 286.1)",
+          "oklch(26.4% 0.013 286.1)",
+          "oklch(37.9% 0.013 286.1)",
+          "oklch(49.3% 0.013 286.1)",
+          "oklch(60.7% 0.013 286.1)",
+          "oklch(72.1% 0.013 286.1)",
+          "oklch(83.6% 0.013 286.1)",
+          "oklch(95.0% 0.013 286.1)"
+        ],
+        "note": "Translucent (alpha 0.5); composites over its surface."
+      },
+      "island-fill": {
+        "role": "neutral",
+        "displayName": "Island Fill",
+        "canonical": "rgba(118, 118, 128, .28)",
+        "tonalRamp": [
+          "oklch(15.0% 0.015 285.9)",
+          "oklch(26.4% 0.015 285.9)",
+          "oklch(37.9% 0.015 285.9)",
+          "oklch(49.3% 0.015 285.9)",
+          "oklch(60.7% 0.015 285.9)",
+          "oklch(72.1% 0.015 285.9)",
+          "oklch(83.6% 0.015 285.9)",
+          "oklch(95.0% 0.015 285.9)"
+        ],
+        "note": "Translucent (alpha 0.28); composites over its surface."
+      },
+      "island-fill-hover": {
+        "role": "neutral",
+        "displayName": "Island Fill Hover",
+        "canonical": "rgba(118, 118, 128, .42)",
+        "tonalRamp": [
+          "oklch(15.0% 0.015 285.9)",
+          "oklch(26.4% 0.015 285.9)",
+          "oklch(37.9% 0.015 285.9)",
+          "oklch(49.3% 0.015 285.9)",
+          "oklch(60.7% 0.015 285.9)",
+          "oklch(72.1% 0.015 285.9)",
+          "oklch(83.6% 0.015 285.9)",
+          "oklch(95.0% 0.015 285.9)"
+        ],
+        "note": "Translucent (alpha 0.42); composites over its surface."
+      },
+      "island-separator": {
+        "role": "neutral",
+        "displayName": "Island Separator",
+        "canonical": "rgba(84, 84, 88, .55)",
+        "tonalRamp": [
+          "oklch(15.0% 0.006 286.1)",
+          "oklch(26.4% 0.006 286.1)",
+          "oklch(37.9% 0.006 286.1)",
+          "oklch(49.3% 0.006 286.1)",
+          "oklch(60.7% 0.006 286.1)",
+          "oklch(72.1% 0.006 286.1)",
+          "oklch(83.6% 0.006 286.1)",
+          "oklch(95.0% 0.006 286.1)"
+        ],
+        "note": "Translucent (alpha 0.55); composites over its surface."
+      },
+      "system-orange": {
+        "role": "primary",
+        "displayName": "System Orange",
+        "canonical": "#ff9f0a",
+        "tonalRamp": [
+          "oklch(15.0% 0.171 67.2)",
+          "oklch(26.4% 0.171 67.2)",
+          "oklch(37.9% 0.171 67.2)",
+          "oklch(49.3% 0.171 67.2)",
+          "oklch(60.7% 0.171 67.2)",
+          "oklch(72.1% 0.171 67.2)",
+          "oklch(83.6% 0.171 67.2)",
+          "oklch(95.0% 0.171 67.2)"
+        ],
+        "oklch": "oklch(78.2% 0.171 67.2)"
+      },
+      "system-green": {
+        "role": "secondary",
+        "displayName": "System Green",
+        "canonical": "#30d158",
+        "tonalRamp": [
+          "oklch(15.0% 0.200 147.0)",
+          "oklch(26.4% 0.200 147.0)",
+          "oklch(37.9% 0.200 147.0)",
+          "oklch(49.3% 0.200 147.0)",
+          "oklch(60.7% 0.200 147.0)",
+          "oklch(72.1% 0.200 147.0)",
+          "oklch(83.6% 0.200 147.0)",
+          "oklch(95.0% 0.200 147.0)"
+        ],
+        "oklch": "oklch(75.6% 0.208 147.0)"
+      },
+      "system-red": {
+        "role": "secondary",
+        "displayName": "System Red",
+        "canonical": "#ff453a",
+        "tonalRamp": [
+          "oklch(15.0% 0.200 28.3)",
+          "oklch(26.4% 0.200 28.3)",
+          "oklch(37.9% 0.200 28.3)",
+          "oklch(49.3% 0.200 28.3)",
+          "oklch(60.7% 0.200 28.3)",
+          "oklch(72.1% 0.200 28.3)",
+          "oklch(83.6% 0.200 28.3)",
+          "oklch(95.0% 0.200 28.3)"
+        ],
+        "oklch": "oklch(66.3% 0.224 28.3)"
+      },
+      "system-blue": {
+        "role": "secondary",
+        "displayName": "System Blue",
+        "canonical": "#0a84ff",
+        "tonalRamp": [
+          "oklch(15.0% 0.200 255.5)",
+          "oklch(26.4% 0.200 255.5)",
+          "oklch(37.9% 0.200 255.5)",
+          "oklch(49.3% 0.200 255.5)",
+          "oklch(60.7% 0.200 255.5)",
+          "oklch(72.1% 0.200 255.5)",
+          "oklch(83.6% 0.200 255.5)",
+          "oklch(95.0% 0.200 255.5)"
+        ],
+        "oklch": "oklch(62.4% 0.206 255.5)"
+      },
+      "offline-gray": {
+        "role": "neutral",
+        "displayName": "Offline Gray",
+        "canonical": "#636366",
+        "tonalRamp": [
+          "oklch(15.0% 0.005 286.2)",
+          "oklch(26.4% 0.005 286.2)",
+          "oklch(37.9% 0.005 286.2)",
+          "oklch(49.3% 0.005 286.2)",
+          "oklch(60.7% 0.005 286.2)",
+          "oklch(72.1% 0.005 286.2)",
+          "oklch(83.6% 0.005 286.2)",
+          "oklch(95.0% 0.005 286.2)"
+        ],
+        "oklch": "oklch(50.1% 0.005 286.2)"
+      },
+      "page-bg": {
+        "role": "neutral",
+        "displayName": "Page Bg",
+        "canonical": "#f2f2f7",
+        "tonalRamp": [
+          "oklch(15.0% 0.007 286.3)",
+          "oklch(26.4% 0.007 286.3)",
+          "oklch(37.9% 0.007 286.3)",
+          "oklch(49.3% 0.007 286.3)",
+          "oklch(60.7% 0.007 286.3)",
+          "oklch(72.1% 0.007 286.3)",
+          "oklch(83.6% 0.007 286.3)",
+          "oklch(95.0% 0.007 286.3)"
+        ],
+        "oklch": "oklch(96.3% 0.007 286.3)"
+      },
+      "page-group": {
+        "role": "neutral",
+        "displayName": "Page Group",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15.0% 0.000 89.9)",
+          "oklch(26.4% 0.000 89.9)",
+          "oklch(37.9% 0.000 89.9)",
+          "oklch(49.3% 0.000 89.9)",
+          "oklch(60.7% 0.000 89.9)",
+          "oklch(72.1% 0.000 89.9)",
+          "oklch(83.6% 0.000 89.9)",
+          "oklch(95.0% 0.000 89.9)"
+        ],
+        "oklch": "oklch(100.0% 0.000 89.9)"
+      },
+      "page-label": {
+        "role": "neutral",
+        "displayName": "Page Label",
+        "canonical": "#000000",
+        "tonalRamp": [
+          "oklch(15.0% 0.000 0.0)",
+          "oklch(26.4% 0.000 0.0)",
+          "oklch(37.9% 0.000 0.0)",
+          "oklch(49.3% 0.000 0.0)",
+          "oklch(60.7% 0.000 0.0)",
+          "oklch(72.1% 0.000 0.0)",
+          "oklch(83.6% 0.000 0.0)",
+          "oklch(95.0% 0.000 0.0)"
+        ],
+        "oklch": "oklch(0.0% 0.000 0.0)"
+      },
+      "page-label-secondary": {
+        "role": "neutral",
+        "displayName": "Page Label Secondary",
+        "canonical": "rgba(60, 60, 67, .78)",
+        "tonalRamp": [
+          "oklch(15.0% 0.012 285.8)",
+          "oklch(26.4% 0.012 285.8)",
+          "oklch(37.9% 0.012 285.8)",
+          "oklch(49.3% 0.012 285.8)",
+          "oklch(60.7% 0.012 285.8)",
+          "oklch(72.1% 0.012 285.8)",
+          "oklch(83.6% 0.012 285.8)",
+          "oklch(95.0% 0.012 285.8)"
+        ],
+        "note": "Translucent (alpha 0.78); composites over its surface."
+      },
+      "page-separator": {
+        "role": "neutral",
+        "displayName": "Page Separator",
+        "canonical": "rgba(60, 60, 67, .2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.012 285.8)",
+          "oklch(26.4% 0.012 285.8)",
+          "oklch(37.9% 0.012 285.8)",
+          "oklch(49.3% 0.012 285.8)",
+          "oklch(60.7% 0.012 285.8)",
+          "oklch(72.1% 0.012 285.8)",
+          "oklch(83.6% 0.012 285.8)",
+          "oklch(95.0% 0.012 285.8)"
+        ],
+        "note": "Translucent (alpha 0.2); composites over its surface."
+      },
+      "page-press": {
+        "role": "neutral",
+        "displayName": "Page Press",
+        "canonical": "rgba(120, 120, 128, .16)",
+        "tonalRamp": [
+          "oklch(15.0% 0.012 286.0)",
+          "oklch(26.4% 0.012 286.0)",
+          "oklch(37.9% 0.012 286.0)",
+          "oklch(49.3% 0.012 286.0)",
+          "oklch(60.7% 0.012 286.0)",
+          "oklch(72.1% 0.012 286.0)",
+          "oklch(83.6% 0.012 286.0)",
+          "oklch(95.0% 0.012 286.0)"
+        ],
+        "note": "Translucent (alpha 0.16); composites over its surface."
+      },
+      "page-tint": {
+        "role": "neutral",
+        "displayName": "Page Tint",
+        "canonical": "#007aff",
+        "tonalRamp": [
+          "oklch(15.0% 0.200 257.4)",
+          "oklch(26.4% 0.200 257.4)",
+          "oklch(37.9% 0.200 257.4)",
+          "oklch(49.3% 0.200 257.4)",
+          "oklch(60.7% 0.200 257.4)",
+          "oklch(72.1% 0.200 257.4)",
+          "oklch(83.6% 0.200 257.4)",
+          "oklch(95.0% 0.200 257.4)"
+        ],
+        "oklch": "oklch(60.3% 0.218 257.4)"
+      },
+      "page-switch-off": {
+        "role": "neutral",
+        "displayName": "Page Switch Off",
+        "canonical": "rgba(120, 120, 128, .2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.012 286.0)",
+          "oklch(26.4% 0.012 286.0)",
+          "oklch(37.9% 0.012 286.0)",
+          "oklch(49.3% 0.012 286.0)",
+          "oklch(60.7% 0.012 286.0)",
+          "oklch(72.1% 0.012 286.0)",
+          "oklch(83.6% 0.012 286.0)",
+          "oklch(95.0% 0.012 286.0)"
+        ],
+        "note": "Translucent (alpha 0.2); composites over its surface."
+      },
+      "page-switch-on": {
+        "role": "neutral",
+        "displayName": "Page Switch On",
+        "canonical": "#34c759",
+        "tonalRamp": [
+          "oklch(15.0% 0.194 147.4)",
+          "oklch(26.4% 0.194 147.4)",
+          "oklch(37.9% 0.194 147.4)",
+          "oklch(49.3% 0.194 147.4)",
+          "oklch(60.7% 0.194 147.4)",
+          "oklch(72.1% 0.194 147.4)",
+          "oklch(83.6% 0.194 147.4)",
+          "oklch(95.0% 0.194 147.4)"
+        ],
+        "oklch": "oklch(73.0% 0.194 147.4)"
+      },
+      "page-chip": {
+        "role": "neutral",
+        "displayName": "Page Chip",
+        "canonical": "rgba(118, 118, 128, .12)",
+        "tonalRamp": [
+          "oklch(15.0% 0.015 285.9)",
+          "oklch(26.4% 0.015 285.9)",
+          "oklch(37.9% 0.015 285.9)",
+          "oklch(49.3% 0.015 285.9)",
+          "oklch(60.7% 0.015 285.9)",
+          "oklch(72.1% 0.015 285.9)",
+          "oklch(83.6% 0.015 285.9)",
+          "oklch(95.0% 0.015 285.9)"
+        ],
+        "note": "Translucent (alpha 0.12); composites over its surface."
+      },
+      "page-bg-dark": {
+        "role": "neutral",
+        "displayName": "Page Bg Dark",
+        "canonical": "#000000",
+        "tonalRamp": [
+          "oklch(15.0% 0.000 0.0)",
+          "oklch(26.4% 0.000 0.0)",
+          "oklch(37.9% 0.000 0.0)",
+          "oklch(49.3% 0.000 0.0)",
+          "oklch(60.7% 0.000 0.0)",
+          "oklch(72.1% 0.000 0.0)",
+          "oklch(83.6% 0.000 0.0)",
+          "oklch(95.0% 0.000 0.0)"
+        ],
+        "oklch": "oklch(0.0% 0.000 0.0)"
+      },
+      "page-group-dark": {
+        "role": "neutral",
+        "displayName": "Page Group Dark",
+        "canonical": "#1c1c1e",
+        "tonalRamp": [
+          "oklch(15.0% 0.004 286.1)",
+          "oklch(26.4% 0.004 286.1)",
+          "oklch(37.9% 0.004 286.1)",
+          "oklch(49.3% 0.004 286.1)",
+          "oklch(60.7% 0.004 286.1)",
+          "oklch(72.1% 0.004 286.1)",
+          "oklch(83.6% 0.004 286.1)",
+          "oklch(95.0% 0.004 286.1)"
+        ],
+        "oklch": "oklch(22.7% 0.004 286.1)"
+      },
+      "page-label-dark": {
+        "role": "neutral",
+        "displayName": "Page Label Dark",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15.0% 0.000 89.9)",
+          "oklch(26.4% 0.000 89.9)",
+          "oklch(37.9% 0.000 89.9)",
+          "oklch(49.3% 0.000 89.9)",
+          "oklch(60.7% 0.000 89.9)",
+          "oklch(72.1% 0.000 89.9)",
+          "oklch(83.6% 0.000 89.9)",
+          "oklch(95.0% 0.000 89.9)"
+        ],
+        "oklch": "oklch(100.0% 0.000 89.9)"
+      },
+      "page-label-secondary-dark": {
+        "role": "neutral",
+        "displayName": "Page Label Secondary Dark",
+        "canonical": "rgba(235, 235, 245, .64)",
+        "tonalRamp": [
+          "oklch(15.0% 0.013 286.1)",
+          "oklch(26.4% 0.013 286.1)",
+          "oklch(37.9% 0.013 286.1)",
+          "oklch(49.3% 0.013 286.1)",
+          "oklch(60.7% 0.013 286.1)",
+          "oklch(72.1% 0.013 286.1)",
+          "oklch(83.6% 0.013 286.1)",
+          "oklch(95.0% 0.013 286.1)"
+        ],
+        "note": "Translucent (alpha 0.64); composites over its surface."
+      },
+      "page-separator-dark": {
+        "role": "neutral",
+        "displayName": "Page Separator Dark",
+        "canonical": "rgba(84, 84, 88, .6)",
+        "tonalRamp": [
+          "oklch(15.0% 0.006 286.1)",
+          "oklch(26.4% 0.006 286.1)",
+          "oklch(37.9% 0.006 286.1)",
+          "oklch(49.3% 0.006 286.1)",
+          "oklch(60.7% 0.006 286.1)",
+          "oklch(72.1% 0.006 286.1)",
+          "oklch(83.6% 0.006 286.1)",
+          "oklch(95.0% 0.006 286.1)"
+        ],
+        "note": "Translucent (alpha 0.6); composites over its surface."
+      },
+      "page-press-dark": {
+        "role": "neutral",
+        "displayName": "Page Press Dark",
+        "canonical": "rgba(120, 120, 128, .3)",
+        "tonalRamp": [
+          "oklch(15.0% 0.012 286.0)",
+          "oklch(26.4% 0.012 286.0)",
+          "oklch(37.9% 0.012 286.0)",
+          "oklch(49.3% 0.012 286.0)",
+          "oklch(60.7% 0.012 286.0)",
+          "oklch(72.1% 0.012 286.0)",
+          "oklch(83.6% 0.012 286.0)",
+          "oklch(95.0% 0.012 286.0)"
+        ],
+        "note": "Translucent (alpha 0.3); composites over its surface."
+      },
+      "page-tint-dark": {
+        "role": "neutral",
+        "displayName": "Page Tint Dark",
+        "canonical": "#0a84ff",
+        "tonalRamp": [
+          "oklch(15.0% 0.200 255.5)",
+          "oklch(26.4% 0.200 255.5)",
+          "oklch(37.9% 0.200 255.5)",
+          "oklch(49.3% 0.200 255.5)",
+          "oklch(60.7% 0.200 255.5)",
+          "oklch(72.1% 0.200 255.5)",
+          "oklch(83.6% 0.200 255.5)",
+          "oklch(95.0% 0.200 255.5)"
+        ],
+        "oklch": "oklch(62.4% 0.206 255.5)"
+      },
+      "page-switch-off-dark": {
+        "role": "neutral",
+        "displayName": "Page Switch Off Dark",
+        "canonical": "rgba(120, 120, 128, .32)",
+        "tonalRamp": [
+          "oklch(15.0% 0.012 286.0)",
+          "oklch(26.4% 0.012 286.0)",
+          "oklch(37.9% 0.012 286.0)",
+          "oklch(49.3% 0.012 286.0)",
+          "oklch(60.7% 0.012 286.0)",
+          "oklch(72.1% 0.012 286.0)",
+          "oklch(83.6% 0.012 286.0)",
+          "oklch(95.0% 0.012 286.0)"
+        ],
+        "note": "Translucent (alpha 0.32); composites over its surface."
+      },
+      "page-switch-on-dark": {
+        "role": "neutral",
+        "displayName": "Page Switch On Dark",
+        "canonical": "#30d158",
+        "tonalRamp": [
+          "oklch(15.0% 0.200 147.0)",
+          "oklch(26.4% 0.200 147.0)",
+          "oklch(37.9% 0.200 147.0)",
+          "oklch(49.3% 0.200 147.0)",
+          "oklch(60.7% 0.200 147.0)",
+          "oklch(72.1% 0.200 147.0)",
+          "oklch(83.6% 0.200 147.0)",
+          "oklch(95.0% 0.200 147.0)"
+        ],
+        "oklch": "oklch(75.6% 0.208 147.0)"
+      },
+      "page-chip-dark": {
+        "role": "neutral",
+        "displayName": "Page Chip Dark",
+        "canonical": "rgba(118, 118, 128, .26)",
+        "tonalRamp": [
+          "oklch(15.0% 0.015 285.9)",
+          "oklch(26.4% 0.015 285.9)",
+          "oklch(37.9% 0.015 285.9)",
+          "oklch(49.3% 0.015 285.9)",
+          "oklch(60.7% 0.015 285.9)",
+          "oklch(72.1% 0.015 285.9)",
+          "oklch(83.6% 0.015 285.9)",
+          "oklch(95.0% 0.015 285.9)"
+        ],
+        "note": "Translucent (alpha 0.26); composites over its surface."
+      },
+      "tile-orange": {
+        "role": "neutral",
+        "displayName": "Tile Orange",
+        "canonical": "#ff9500",
+        "tonalRamp": [
+          "oklch(15.0% 0.175 62.6)",
+          "oklch(26.4% 0.175 62.6)",
+          "oklch(37.9% 0.175 62.6)",
+          "oklch(49.3% 0.175 62.6)",
+          "oklch(60.7% 0.175 62.6)",
+          "oklch(72.1% 0.175 62.6)",
+          "oklch(83.6% 0.175 62.6)",
+          "oklch(95.0% 0.175 62.6)"
+        ],
+        "oklch": "oklch(76.5% 0.175 62.6)"
+      },
+      "tile-blue": {
+        "role": "neutral",
+        "displayName": "Tile Blue",
+        "canonical": "#007aff",
+        "tonalRamp": [
+          "oklch(15.0% 0.200 257.4)",
+          "oklch(26.4% 0.200 257.4)",
+          "oklch(37.9% 0.200 257.4)",
+          "oklch(49.3% 0.200 257.4)",
+          "oklch(60.7% 0.200 257.4)",
+          "oklch(72.1% 0.200 257.4)",
+          "oklch(83.6% 0.200 257.4)",
+          "oklch(95.0% 0.200 257.4)"
+        ],
+        "oklch": "oklch(60.3% 0.218 257.4)"
+      },
+      "tile-pink": {
+        "role": "neutral",
+        "displayName": "Tile Pink",
+        "canonical": "#ff2d55",
+        "tonalRamp": [
+          "oklch(15.0% 0.200 17.9)",
+          "oklch(26.4% 0.200 17.9)",
+          "oklch(37.9% 0.200 17.9)",
+          "oklch(49.3% 0.200 17.9)",
+          "oklch(60.7% 0.200 17.9)",
+          "oklch(72.1% 0.200 17.9)",
+          "oklch(83.6% 0.200 17.9)",
+          "oklch(95.0% 0.200 17.9)"
+        ],
+        "oklch": "oklch(65.0% 0.238 17.9)"
+      },
+      "tile-gray": {
+        "role": "neutral",
+        "displayName": "Tile Gray",
+        "canonical": "#8e8e93",
+        "tonalRamp": [
+          "oklch(15.0% 0.007 286.2)",
+          "oklch(26.4% 0.007 286.2)",
+          "oklch(37.9% 0.007 286.2)",
+          "oklch(49.3% 0.007 286.2)",
+          "oklch(60.7% 0.007 286.2)",
+          "oklch(72.1% 0.007 286.2)",
+          "oklch(83.6% 0.007 286.2)",
+          "oklch(95.0% 0.007 286.2)"
+        ],
+        "oklch": "oklch(64.8% 0.007 286.2)"
+      },
+      "tile-indigo": {
+        "role": "neutral",
+        "displayName": "Tile Indigo",
+        "canonical": "#5856d6",
+        "tonalRamp": [
+          "oklch(15.0% 0.191 278.3)",
+          "oklch(26.4% 0.191 278.3)",
+          "oklch(37.9% 0.191 278.3)",
+          "oklch(49.3% 0.191 278.3)",
+          "oklch(60.7% 0.191 278.3)",
+          "oklch(72.1% 0.191 278.3)",
+          "oklch(83.6% 0.191 278.3)",
+          "oklch(95.0% 0.191 278.3)"
+        ],
+        "oklch": "oklch(52.9% 0.191 278.3)"
+      },
+      "tile-green": {
+        "role": "neutral",
+        "displayName": "Tile Green",
+        "canonical": "#34c759",
+        "tonalRamp": [
+          "oklch(15.0% 0.194 147.4)",
+          "oklch(26.4% 0.194 147.4)",
+          "oklch(37.9% 0.194 147.4)",
+          "oklch(49.3% 0.194 147.4)",
+          "oklch(60.7% 0.194 147.4)",
+          "oklch(72.1% 0.194 147.4)",
+          "oklch(83.6% 0.194 147.4)",
+          "oklch(95.0% 0.194 147.4)"
+        ],
+        "oklch": "oklch(73.0% 0.194 147.4)"
+      }
+    },
+    "typographyMeta": {
+      "large-title": {
+        "displayName": "Large Title",
+        "purpose": "Control page title only, balanced wrap."
+      },
+      "group-title": {
+        "displayName": "Group Title",
+        "purpose": "Grouped-list section headings."
+      },
+      "ask-tool": {
+        "displayName": "Ask Tool",
+        "purpose": "Tool name in the permission view; one line, ellipsis."
+      },
+      "island-title": {
+        "displayName": "Island Title",
+        "purpose": "Expanded detail title."
+      },
+      "page-lede": {
+        "displayName": "Page Lede",
+        "purpose": "Hero sentence under the large title, label-secondary, max 46ch."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Page rows and running text."
+      },
+      "island-compact": {
+        "displayName": "Island Compact",
+        "purpose": "Compact status line: verb at 600, detail at 400 in secondary."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Capsule buttons."
+      },
+      "numeric": {
+        "displayName": "Numeric",
+        "purpose": "Session timer, countdown, compact trailing time; tabular numerals always."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Island meta, recent events (12.5px), cwd and key hints."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Requested command in the code well; selectable, wraps anywhere."
+      }
+    },
+    "shadows": [
+      {
+        "name": "island-float",
+        "value": "inset 0 0 0 .5px rgba(255, 255, 255, .1), 0 16px 36px -12px rgba(0, 0, 0, .55), 0 3px 10px rgba(0, 0, 0, .18)",
+        "purpose": "The island only: hairline edge plus a soft float over the page."
+      },
+      {
+        "name": "switch-knob",
+        "value": "0 3px 8px rgba(0, 0, 0, .15), 0 1px 1px rgba(0, 0, 0, .16), 0 3px 1px rgba(0, 0, 0, .1)",
+        "purpose": "iOS switch thumb only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "spring-open",
+        "value": "spring(response 0.55s, damping 0.74) sampled to linear() at 49 points, ~680ms, ~3% overshoot",
+        "purpose": "Island grows: width, height, radius, avatar seat, page top padding. Also the press-release spring for capsules, call buttons and the switch knob."
+      },
+      {
+        "name": "spring-close",
+        "value": "spring(response 0.42s, damping 0.92) sampled to linear() at 49 points, ~440ms",
+        "purpose": "Island shrinks."
+      },
+      {
+        "name": "spring-fallback",
+        "value": "cubic-bezier(.3, 1.25, .5, 1) 520ms open / cubic-bezier(.2, .8, .2, 1) 420ms close",
+        "purpose": "Browsers without CSS linear()."
+      },
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(.2, .8, .2, 1)",
+        "purpose": "Blur-in, blur-replace, crossfade blur, check draw, log entry."
+      },
+      {
+        "name": "view-blur-out",
+        "value": "opacity, blur(10px), scale(.94) over 170ms ease-out",
+        "purpose": "Outgoing island view."
+      },
+      {
+        "name": "view-blur-in",
+        "value": "opacity 340ms ease-out +80ms; blur 10px to 0 400ms ease-out +60ms; scale on the active spring +40ms",
+        "purpose": "Incoming island view."
+      },
+      {
+        "name": "blur-replace",
+        "value": "opacity 0 to 1, blur(5px) to 0, 300ms cubic-bezier(.2, .8, .2, 1)",
+        "purpose": "Changed text inside the visible view."
+      },
+      {
+        "name": "avatar-crossfade",
+        "value": "opacity 400ms ease; blur(6px) to 0 over 450ms ease-out",
+        "purpose": "Two video layers crossfade between hatch clips."
+      },
+      {
+        "name": "check-draw",
+        "value": "stroke-dashoffset 1 to 0, 450ms ease-out, 280ms delay",
+        "purpose": "Done and allowed check."
+      },
+      {
+        "name": "spinner",
+        "value": "rotate 360deg, 800ms steps(8) infinite",
+        "purpose": "iOS 8-spoke activity indicator."
+      },
+      {
+        "name": "countdown-ring",
+        "value": "stroke-dashoffset 1s linear, updated every second",
+        "purpose": "Ring drains toward the permission timeout."
+      },
+      {
+        "name": "nudge",
+        "value": "scale 1, 1.06 @28%, .985 @60%, 1; 640ms ease-out; once per request",
+        "purpose": "New permission request."
+      },
+      {
+        "name": "shake",
+        "value": "translateX 0, -9, 8, -6, 4, -2, 0 px; 460ms cubic-bezier(.36, .07, .19, .97)",
+        "purpose": "Error or failed answer."
+      },
+      {
+        "name": "press",
+        "value": "scale .95 (capsule) / .88 (call button), 80ms; release on spring-open",
+        "purpose": "Pressed buttons."
+      },
+      {
+        "name": "row-press",
+        "value": "instant tint, release 400ms ease-out",
+        "purpose": "Grouped-list button rows."
+      },
+      {
+        "name": "log-entry",
+        "value": "opacity 0 + translateY(-6px) to rest, 340ms ease-out, 40ms stagger",
+        "purpose": "New activity rows."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "morph 200ms ease; views opacity-only; no blur-replace, nudge, shake, log entry or check draw; still avatar; spinner and ring continue",
+        "purpose": "prefers-reduced-motion: reduce."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "island-max-compact",
+        "value": "min(470px, 100vw - 24px)"
+      },
+      {
+        "name": "island-max-expanded",
+        "value": "min(560px, 100vw - 24px)"
+      },
+      {
+        "name": "page-column",
+        "value": "640px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Island, compact",
+      "kind": "custom",
+      "refersTo": "island-compact",
+      "description": "The 44px black pill: rounded-square artwork, verb plus detail, spinner and session time.",
+      "html": "<div class=\"ds-island\" tabindex=\"0\"><span class=\"ds-art\"></span><span class=\"ds-txt\"><b>Running</b><span>npm test</span></span><svg class=\"ds-spin\" viewBox=\"0 0 20 20\"><g stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><line x1=\"10\" y1=\"2.6\" x2=\"10\" y2=\"6.4\"/><line x1=\"10\" y1=\"2.6\" x2=\"10\" y2=\"6.4\" opacity=\".85\" transform=\"rotate(-45 10 10)\"/><line x1=\"10\" y1=\"2.6\" x2=\"10\" y2=\"6.4\" opacity=\".7\" transform=\"rotate(-90 10 10)\"/><line x1=\"10\" y1=\"2.6\" x2=\"10\" y2=\"6.4\" opacity=\".58\" transform=\"rotate(-135 10 10)\"/><line x1=\"10\" y1=\"2.6\" x2=\"10\" y2=\"6.4\" opacity=\".47\" transform=\"rotate(-180 10 10)\"/><line x1=\"10\" y1=\"2.6\" x2=\"10\" y2=\"6.4\" opacity=\".38\" transform=\"rotate(-225 10 10)\"/><line x1=\"10\" y1=\"2.6\" x2=\"10\" y2=\"6.4\" opacity=\".3\" transform=\"rotate(-270 10 10)\"/><line x1=\"10\" y1=\"2.6\" x2=\"10\" y2=\"6.4\" opacity=\".24\" transform=\"rotate(-315 10 10)\"/></g></svg><span class=\"ds-time\">2:14</span></div>",
+      "css": ".ds-island { position: relative; display: inline-flex; align-items: center; gap: 10px; height: 44px; min-width: 176px; padding: 0 15px 0 48px; border-radius: 22px; background: #000; color: #fff; font: 500 14px/1.3 -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; letter-spacing: -.01em; white-space: nowrap; box-shadow: inset 0 0 0 .5px rgba(255,255,255,.1), 0 16px 36px -12px rgba(0,0,0,.55), 0 3px 10px rgba(0,0,0,.18); cursor: pointer; } .ds-island:focus-visible { outline: 2px solid #0a84ff; outline-offset: 3px; } .ds-art { position: absolute; left: 6px; top: 6px; width: 32px; height: 32px; border-radius: 10px; background: #1c1c1e; } .ds-txt b { font-weight: 600; } .ds-txt span { margin-left: 5px; font-weight: 400; color: rgba(235,235,245,.64); } .ds-spin { width: 16px; height: 16px; color: rgba(235,235,245,.64); animation: ds-spin .8s steps(8) infinite; } @keyframes ds-spin { to { rotate: 360deg; } } .ds-time { font: 500 13px/1 -apple-system, 'Segoe UI', system-ui, sans-serif; font-variant-numeric: tabular-nums; color: rgba(235,235,245,.64); }"
+    },
+    {
+      "name": "Island, permission (ask)",
+      "kind": "custom",
+      "refersTo": "island-expanded",
+      "description": "Incoming-call layout: artwork with orange countdown ring, verb and tool, round Deny and Allow, code well.",
+      "html": "<div class=\"ds-ask\"><div class=\"ds-head\"><span class=\"ds-seat\"></span><div class=\"ds-ht\"><p class=\"ds-verb\">Claude wants to run</p><p class=\"ds-tool\">Bash</p></div><button class=\"ds-round ds-deny\" aria-label=\"Deny\"><svg viewBox=\"0 0 24 24\"><path d=\"M6.5 6.5l11 11M17.5 6.5l-11 11\"/></svg></button><button class=\"ds-round ds-allow\" aria-label=\"Allow\"><svg viewBox=\"0 0 24 24\"><path d=\"M5 12.5l4.5 4.5L19 7.5\"/></svg></button></div><pre class=\"ds-code\">npm run build</pre><div class=\"ds-foot\"><span></span><span class=\"ds-left\">4:12 left</span></div></div>",
+      "css": ".ds-ask { width: 520px; padding: 18px; border-radius: 34px; background: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif; box-shadow: inset 0 0 0 .5px rgba(255,255,255,.1), 0 16px 36px -12px rgba(0,0,0,.55); } .ds-head { display: flex; align-items: flex-start; gap: 14px; } .ds-seat { width: 64px; height: 64px; flex: none; border-radius: 16px; background: #1c1c1e; outline: 2.2px solid #ff9f0a; outline-offset: 3px; } .ds-ht { flex: 1; min-width: 0; } .ds-ht p { margin: 0; } .ds-verb { padding-top: 4px; font-size: 13px; line-height: 1.3; color: rgba(235,235,245,.64); } .ds-tool { margin-top: 2px; font-size: 19px; font-weight: 600; line-height: 1.2; letter-spacing: -.02em; } .ds-round { width: 46px; height: 46px; margin-left: 12px; border: 0; border-radius: 50%; display: grid; place-items: center; color: #fff; cursor: pointer; transition: scale .3s cubic-bezier(.3,1.3,.5,1), filter .2s ease; } .ds-round svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; } .ds-round:hover { filter: brightness(1.1); } .ds-round:active { scale: .88; transition-duration: .08s; } .ds-round:focus-visible { outline: 2px solid #0a84ff; outline-offset: 2px; } .ds-deny { background: #ff453a; } .ds-allow { background: #30d158; } .ds-code { margin: 14px 0 0; padding: 11px 13px; border-radius: 16px; background: rgba(118,118,128,.28); font: 400 12.5px/1.5 ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, monospace; white-space: pre-wrap; } .ds-foot { display: flex; justify-content: space-between; margin-top: 12px; } .ds-left { font-size: 13px; font-weight: 500; line-height: 1; font-variant-numeric: tabular-nums; color: #ff9f0a; }"
+    },
+    {
+      "name": "Capsule",
+      "kind": "button",
+      "refersTo": "capsule",
+      "description": "Secondary action inside the island (sound toggle, Always allow).",
+      "html": "<button class=\"ds-capsule\"><svg viewBox=\"0 0 24 24\"><path d=\"M4 9.5h3.5L12 6v12l-4.5-3.5H4z\"/><path d=\"M15.5 9.5a3.5 3.5 0 0 1 0 5\"/><path d=\"M18 7a7 7 0 0 1 0 10\"/></svg>Sound on</button>",
+      "css": ".ds-capsule { display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 14px; border: 0; border-radius: 999px; background: rgba(118,118,128,.28); color: #fff; font: 600 13px/1 -apple-system, 'Segoe UI', system-ui, sans-serif; cursor: pointer; transition: background-color .2s ease, scale .3s cubic-bezier(.3,1.3,.5,1); } .ds-capsule svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; } .ds-capsule:hover { background: rgba(118,118,128,.42); } .ds-capsule:active { scale: .95; transition-duration: .08s; } .ds-capsule:focus-visible { outline: 2px solid #0a84ff; outline-offset: 2px; }"
+    },
+    {
+      "name": "Grouped list with tile rows",
+      "kind": "card",
+      "refersTo": "list-group",
+      "description": "iOS inset-grouped list: Settings tile, title, trailing tint action, inset hairline separators.",
+      "html": "<div class=\"ds-list\"><button class=\"ds-row\"><span class=\"ds-tile\" style=\"background:#ff9500\"><svg viewBox=\"0 0 24 24\"><rect x=\"5\" y=\"11\" width=\"14\" height=\"9.5\" rx=\"2\"/><path d=\"M8.5 11V8a3.5 3.5 0 0 1 7 0v3\"/></svg></span><b>Permission request</b><span class=\"ds-trail\">Run</span></button><button class=\"ds-row\"><span class=\"ds-tile\" style=\"background:#007aff\"><svg viewBox=\"0 0 24 24\"><path d=\"M13 3 5 13.5h6L10 21l8-10.5h-6z\"/></svg></span><b>Working session</b><span class=\"ds-trail\">Run</span></button></div>",
+      "css": ".ds-list { width: 360px; background: var(--group, #fff); border-radius: 12px; overflow: hidden; font: 400 15px/1.45 -apple-system, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif; color: #000; } .ds-row { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px; padding: 9px 16px; border: 0; background: transparent; text-align: left; font: inherit; color: inherit; cursor: pointer; transition: background-color .4s ease-out; } .ds-row + .ds-row::before { content: ''; position: absolute; top: 0; right: 0; left: 58px; border-top: .5px solid rgba(60,60,67,.2); } .ds-row:active { background: rgba(120,120,128,.16); transition: none; } .ds-row:focus-visible { outline: 2px solid #007aff; outline-offset: -3px; border-radius: 12px; } .ds-row b { flex: 1; font-weight: 500; } .ds-tile { width: 30px; height: 30px; flex: none; display: grid; place-items: center; border-radius: 7px; color: #fff; } .ds-tile svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; } .ds-trail { color: #007aff; }"
+    },
+    {
+      "name": "Switch",
+      "kind": "input",
+      "refersTo": "switch-off",
+      "description": "Native checkbox styled as the iOS switch; knob widens while pressed.",
+      "html": "<input class=\"ds-switch\" type=\"checkbox\" role=\"switch\" checked aria-label=\"Sound\">",
+      "css": ".ds-switch { appearance: none; -webkit-appearance: none; position: relative; margin: 0; width: 51px; height: 31px; border-radius: 999px; background: rgba(120,120,128,.2); cursor: pointer; transition: background-color .25s ease; } .ds-switch::before { content: ''; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 999px; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,.15), 0 1px 1px rgba(0,0,0,.16), 0 3px 1px rgba(0,0,0,.1); transition: translate .34s cubic-bezier(.3,1.3,.5,1), width .2s ease; } .ds-switch:checked { background: #34c759; } .ds-switch:checked::before { translate: 20px 0; } .ds-switch:active::before { width: 33px; } .ds-switch:checked:active::before { translate: 14px 0; } .ds-switch:focus-visible { outline: 2px solid #007aff; outline-offset: 2px; }"
+    },
+    {
+      "name": "Status discs",
+      "kind": "custom",
+      "description": "20px done (green, drawn tick), denied (red cross) and alert (red, gray when offline) indicators.",
+      "html": "<span class=\"ds-discs\"><svg class=\"ds-check\" viewBox=\"0 0 20 20\"><circle cx=\"10\" cy=\"10\" r=\"10\" fill=\"#30d158\"/><path d=\"M5.8 10.3l2.8 2.8 5.6-6\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" pathLength=\"1\"/></svg><svg viewBox=\"0 0 20 20\"><circle cx=\"10\" cy=\"10\" r=\"10\" fill=\"#ff453a\"/><path d=\"M6.9 6.9l6.2 6.2M13.1 6.9l-6.2 6.2\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.2\" stroke-linecap=\"round\"/></svg><svg viewBox=\"0 0 20 20\"><circle cx=\"10\" cy=\"10\" r=\"10\" fill=\"#636366\"/><path d=\"M10 5.6v5.2M10 14.2v.1\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.2\" stroke-linecap=\"round\"/></svg></span>",
+      "css": ".ds-discs { display: inline-flex; gap: 10px; padding: 12px; border-radius: 22px; background: #000; } .ds-discs svg { width: 20px; height: 20px; } .ds-check path { stroke-dasharray: 1; animation: ds-draw .45s cubic-bezier(.2,.8,.2,1) .28s both; } @keyframes ds-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } } @media (prefers-reduced-motion: reduce) { .ds-check path { animation: none; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Incoming Call",
+    "overview": "The system is Apple's Dynamic Island, adopted whole by brief, and put to work for Claude Code. One hardware-black shape sits at the top of the screen and changes size instead of changing screens: compact while Claude works, open like an incoming call when Claude needs a decision, open briefly for the done celebration, then folded back. All meaning is carried by shape, the iOS dark system colours, and motion on real springs; there is no chrome, no border colour, and no ambient pulsing.\n\nThe browser control page is the island's Settings app: iOS inset-grouped lists on the system grouped background, coloured Settings tiles, a real switch, large title. It follows light and dark; the island never does. Density is iOS-native: 44 px compact island, 48 px rows, 16 px row inset.\n\nThe avatar is the island's artwork. The hatch character plays as Now-Playing-style rounded-square artwork in the leading seat and travels as a shared element between the compact and expanded seats on the island's own spring.",
+    "keyCharacteristics": [
+      "One black shape, morphing on sampled spring physics, never swapping screens.",
+      "iOS dark system colours each own exactly one job.",
+      "System SF / Segoe type, tabular numerals for every clock.",
+      "Concentric radii: island 34, inner wells 16, artwork 16 inside a 64 px seat.",
+      "Text swaps by blur-replace; views leave by blur-out and arrive by blur-in.",
+      "Reduced motion collapses every movement to opacity and a 200 ms ease."
+    ],
+    "rules": [
+      {
+        "name": "The One Job Rule",
+        "body": "Orange means permission, green means allow or done, red means deny or failure, blue means focus. No colour is borrowed for decoration, and no state uses a coloured border on the island.",
+        "section": "colors"
+      },
+      {
+        "name": "The Always-Black Rule",
+        "body": "The island is #000 in light and dark. Only the page around it follows the colour scheme.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Clock Rule",
+        "body": "Every running number (session timer, countdown, log time) uses tabular numerals so the island never jitters as seconds tick.",
+        "section": "typography"
+      },
+      {
+        "name": "The Verb-First Rule",
+        "body": "Compact state reads verb in semibold, then detail in secondary, then the trailing indicator. One line, ellipsis, never wrap.",
+        "section": "typography"
+      },
+      {
+        "name": "The Hairline Edge Rule",
+        "body": "The island's edge is a 0.5 px white hairline at 10%, never a coloured or animated border.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do change the island's size and radius on the sampled springs (open 0.55/0.74, close 0.42/0.92); measure the target from content.",
+      "Do keep the island #000 with the 0.5 px 10% white hairline in every theme.",
+      "Do give each iOS system colour exactly one job: orange permission, green allow/done, red deny/failure, blue focus.",
+      "Do keep radii concentric: island 34, inner 16, artwork 10 compact / 16 expanded.",
+      "Do swap text by blur-replace and views by blur-out / blur-in.",
+      "Do use tabular numerals for every timer and countdown.",
+      "Do give every motion a reduced-motion path that keeps state readable."
+    ],
+    "donts": [
+      "Don't put coloured borders or a pulsing outline on the island; the brief rejects the web-dashboard pill.",
+      "Don't loop attention effects; the nudge plays once per request.",
+      "Don't add shadows inside the island; depth there is tonal fill on black.",
+      "Don't animate the island with transform scale for the morph; it distorts text and corner radii.",
+      "Don't let the island follow the light theme."
+    ]
+  }
+}
